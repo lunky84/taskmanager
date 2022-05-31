@@ -1,10 +1,21 @@
-import { Container } from "semantic-ui-react";
+import React, { Component } from "react";
+import { Menu } from "semantic-ui-react";
+import Link from "next/link";
 
 const Header = () => {
   return (
-    <header>
-      <Container>The header</Container>
-    </header>
+    <Menu pointing secondary>
+      <Menu.Item>
+        <Link href="/">
+          <a>Home</a>
+        </Link>
+      </Menu.Item>
+      <Menu.Item>
+        <Link href="/tasks">
+          <a>Tasks</a>
+        </Link>
+      </Menu.Item>
+    </Menu>
   );
 };
 export default Header;
