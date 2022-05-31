@@ -69,7 +69,6 @@ export default function Home({ initialUsers }) {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
-            <br />
             <Form.Input
               fluid
               label="Last Name"
@@ -105,12 +104,12 @@ export default function Home({ initialUsers }) {
 
         <Divider horizontal>Users</Divider>
 
-        <Table basic="very" celled collapsing>
+        <Table celled>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>User</Table.HeaderCell>
               <Table.HeaderCell>Email</Table.HeaderCell>
-              <Table.HeaderCell>Action</Table.HeaderCell>
+              <Table.HeaderCell collapsing>Action</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
