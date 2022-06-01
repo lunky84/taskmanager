@@ -52,7 +52,7 @@ export default function Home({ initialUsers }) {
               avatar,
             };
 
-            await fetcher("/api/create", { user: body });
+            await fetcher("/api/createUser", { user: body });
             await setUsers([...users, body]);
             setFirstName("");
             setAvatar("");
@@ -131,7 +131,7 @@ export default function Home({ initialUsers }) {
                     animated="fade"
                     color="red"
                     onClick={async () => {
-                      await fetcher("/api/delete", { id: u.id });
+                      await fetcher("/api/deleteUser", { id: u.id });
                       await setUsers(users.filter((usr) => usr !== u));
                     }}
                   >
