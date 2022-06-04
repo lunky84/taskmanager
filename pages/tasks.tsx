@@ -2,16 +2,19 @@ import React from "react";
 import { Button, Container, Divider, Form, Header, Icon, Image, Table } from "semantic-ui-react";
 import { NextSeo } from "next-seo";
 import { useState } from "react";
+import { Prisma } from "@prisma/client";
+import { fetcher } from "../utils/fetcher";
+import prisma from "../lib/prisma";
 
 export async function getServerSideProps() {
-  const users: Prisma.UserUncheckedCreateInput[] = await prisma.user.findMany();
+  const tasks: Prisma.TaskUncheckedCreateInput[] = await prisma.task.findMany();
   return {
-    props: { initialUsers: users },
+    props: { initialTasks: tasks },
   };
 }
 
-export default function tasks({ initialUsers }) {
-  const [users, setUsers] = useState<Prisma.UserUncheckedCreateInput[]>(initialUsers);
+export default function tasks({ initialTasks }) {
+  const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(initialTasks);
 
   const capitalize = (s) => {
     if (typeof s !== "string") return "";
@@ -26,37 +29,35 @@ export default function tasks({ initialUsers }) {
       <Table celled>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>User</Table.HeaderCell>
-            <Table.HeaderCell>Email</Table.HeaderCell>
+            <Table.HeaderCell>Title</Table.HeaderCell>
+            <Table.HeaderCell>Description</Table.HeaderCell>
             <Table.HeaderCell collapsing>Action</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
         <Table.Body>
-          {users.map((u, index) => (
+          {tasks.map((t, index) => (
             <Table.Row key={index}>
               <Table.Cell>
                 <Header as="h4" image>
-                  <Image src={u.avatar} rounded size="mini"></Image>
                   <Header.Content>
-                    {u.firstName + " " + u.lastName}
-                    <Header.Subheader>{capitalize(u.role)}</Header.Subheader>
+                    {t.title}
                   </Header.Content>
                 </Header>
               </Table.Cell>
-              <Table.Cell>{u.email}</Table.Cell>
+              <Table.Cell>{t.description}</Table.Cell>
               <Table.Cell>
                 <Button
                   animated="fade"
                   color="red"
                   onClick={async () => {
-                    await fetcher("/api/deleteUser", { id: u.id });
-                    await setUsers(users.filter((usr) => usr !== u));
+                    await fetcher("/api/deleteTask", { id: u.id });
+                    await setTasks(tasks.filter((task) => task !== t));
                   }}
                 >
                   <Button.Content visible>Delete</Button.Content>
                   <Button.Content hidden>
-                    <Icon name="user delete" />
+                    <Icon name="delete" />
                   </Button.Content>
                 </Button>
               </Table.Cell>
