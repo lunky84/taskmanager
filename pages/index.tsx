@@ -49,7 +49,7 @@ export default function Home({ initialUsers }) {
               lastName,
               role,
               email,
-              avatar,
+              avatar
             };
 
             await fetcher("/api/createUser", { user: body });
