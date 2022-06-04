@@ -1,3 +1,7 @@
+# Task management system
+
+Task management system built with next.js, semantic ui and prisma
+
 ## Getting Started
 
 ### Install project
@@ -37,3 +41,13 @@ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Useful information
+
+### View database entries
+
+```bash
+npx prisma studio
+```
+
+Open [http://localhost:5555](http://localhost:5555) in your browser
