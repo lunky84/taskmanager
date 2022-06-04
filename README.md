@@ -26,7 +26,7 @@ npx prisma migrate dev
 
 ### Start Docker container
 
-```
+```bash
 docker-compose up -d
 ```
 
