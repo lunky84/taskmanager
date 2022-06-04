@@ -15,11 +15,8 @@ export async function getServerSideProps() {
 
 export default function tasks({ initialTasks }) {
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(initialTasks);
-
-  const capitalize = (s) => {
-    if (typeof s !== "string") return "";
-    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-  };
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   return (
     <Container style={{ margin: 20 }}>
@@ -51,7 +48,7 @@ export default function tasks({ initialTasks }) {
                   animated="fade"
                   color="red"
                   onClick={async () => {
-                    await fetcher("/api/deleteTask", { id: u.id });
+                    await fetcher("/api/task/delete", { task_id: t.task_id });
                     await setTasks(tasks.filter((task) => task !== t));
                   }}
                 >

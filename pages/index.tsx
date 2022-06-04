@@ -131,7 +131,7 @@ export default function Home({ initialUsers }) {
                     animated="fade"
                     color="red"
                     onClick={async () => {
-                      await fetcher("/api/deleteUser", { id: u.id });
+                      await fetcher("/api/deleteUser", { user_id: u.user_id });
                       await setUsers(users.filter((usr) => usr !== u));
                     }}
                   >

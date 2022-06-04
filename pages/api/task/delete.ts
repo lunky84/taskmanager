@@ -1,14 +1,14 @@
-import prisma from "../../lib/prisma";
+import prisma from "../../../lib/prisma";
 
 export default async (req, res) => {
   try {
-    const { id } = req.body;
-    if (!id) {
-      res.json({ error: "You should have an id!" });
+    const { task_id } = req.body;
+    if (!task_id) {
+      res.json({ error: "You should have an task_id!" });
       return;
     }
     const task = await prisma.task.delete({
-      where: { id },
+      where: { task_id },
     });
     res.status(200).json(task);
   } catch (error) {
