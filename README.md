@@ -21,9 +21,7 @@ nvm use
 ### Run Prisma migrations
 
 ```bash
-npm prisma migrate dev
-# or
-yarn prisma migrate dev
+npx prisma migrate dev
 ```
 
 ### Start Docker container
