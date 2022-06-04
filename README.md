@@ -42,6 +42,12 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Useful information
 
+### Seed data into database
+
+```bash
+npx prisma db seed
+```
+
 ### View database entries
 
 ```bash
