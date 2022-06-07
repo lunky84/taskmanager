@@ -21,7 +21,30 @@ export default function tasks({ initialTasks }) {
   return (
     <Container style={{ margin: 20 }}>
       <NextSeo title="Tasks" description="The tasks page" />
+
       <h1>Tasks</h1>
+      <Form
+        onSubmit={async () => {
+          const body: Prisma.TaskCreateInput = {
+            title,
+          };
+
+          await fetcher("/api/task/create", { task: body });
+          await setTasks([...tasks, body]);
+          setTitle("");
+        }}
+      >
+        <Form.Group widths="equal">
+          <Form.Input
+            fluid
+            label="Title"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Button>Submit</Form.Button>
+      </Form>
 
       <Table celled>
         <Table.Header>
@@ -37,9 +60,7 @@ export default function tasks({ initialTasks }) {
             <Table.Row key={index}>
               <Table.Cell>
                 <Header as="h4" image>
-                  <Header.Content>
-                    {t.title}
-                  </Header.Content>
+                  <Header.Content>{t.title}</Header.Content>
                 </Header>
               </Table.Cell>
               <Table.Cell>{t.description}</Table.Cell>
