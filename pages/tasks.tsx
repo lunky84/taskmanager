@@ -27,11 +27,13 @@ export default function tasks({ initialTasks }) {
         onSubmit={async () => {
           const body: Prisma.TaskCreateInput = {
             title,
+            description,
           };
 
           await fetcher("/api/task/create", { task: body });
           await setTasks([...tasks, body]);
           setTitle("");
+          setDescription("");
         }}
       >
         <Form.Group widths="equal">
@@ -41,6 +43,13 @@ export default function tasks({ initialTasks }) {
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+          />
+          <Form.TextArea
+            label="Description"
+            placeholder="Tell us more"
+            style={{ minHeight: 100 }}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </Form.Group>
         <Form.Button>Submit</Form.Button>
