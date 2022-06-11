@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Container, Divider, Form, Header, Icon, Image, Table } from "semantic-ui-react";
+import { Button, Container, Divider, Form, Header, Icon, Image, Table, Pagination } from "semantic-ui-react";
 import { NextSeo } from "next-seo";
 import { useState } from "react";
 import { Prisma } from "@prisma/client";
@@ -92,6 +92,16 @@ export default function tasks({ initialTasks }) {
           ))}
         </Table.Body>
       </Table>
+
+      <Pagination
+        boundaryRange={0}
+        defaultActivePage={1}
+        ellipsisItem={null}
+        firstItem={null}
+        lastItem={null}
+        siblingRange={1}
+        totalPages={10}
+      />
     </Container>
   );
 }
