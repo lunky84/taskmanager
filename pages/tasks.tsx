@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   Container,
@@ -17,16 +17,11 @@ import { fetcher } from "../utils/fetcher";
 import prisma from "../lib/prisma";
 import { useRouter } from "next/router";
 
-export async function getServerSideProps() {
-  const tasks: Prisma.TaskUncheckedCreateInput[] = await prisma.task.findMany({
-    skip: 0,
-    take: 4,
-  });
-
+export async function getServerSideProps({ query: { page = 1 } }) {
+  const tasks = await fetcher(`/api/task/read?page=${page}`, null);
   const count = await prisma.task.count();
-
   return {
-    props: { initialTasks: tasks, taskCount: count },
+    props: { initialTasks: tasks, taskCount: count, currentPage: page },
   };
 }
 
@@ -35,12 +30,12 @@ export default function tasks(props) {
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(props.currentPage);
 
-  const pagginationHandler = async (data) => {
-    setCurrentPage(data.activePage);
-    router.push(`tasks?page=${data.activePage}`, undefined, { shallow: true });
-    const tasks = await fetcher(`/api/task/read?page=${data.activePage}`, null);
+  const pagginationHandler = async (activePage: number) => {
+    setCurrentPage(activePage);
+    router.push(`tasks?page=${activePage}`, undefined, { shallow: true });
+    const tasks = await fetcher(`/api/task/read?page=${activePage}`, null);
     setTasks(tasks);
   };
 
@@ -129,7 +124,8 @@ export default function tasks(props) {
         lastItem={null}
         siblingRange={1}
         totalPages={pageCount}
-        onPageChange={(event, data) => pagginationHandler(data)}
+        activePage={currentPage}
+        onPageChange={(event, data) => pagginationHandler(data.activePage)}
       />
     </Container>
   );
