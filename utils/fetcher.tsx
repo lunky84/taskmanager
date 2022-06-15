@@ -1,5 +1,5 @@
 export const fetcher = (url, data) =>
-  fetch("http://localhost:3000/" + url, {
+  fetch(process.env.NEXT_PUBLIC_BASE_URL + url, {
     method: data ? "POST" : "GET",
     credentials: "include",
     headers: {
