@@ -4,6 +4,12 @@ Task management system built with next.js, semantic ui and prisma
 
 ## Getting Started
 
+### Set the version of Node with Node Version Manager
+
+```bash
+nvm use
+```
+
 ### Install project
 
 ```bash
@@ -12,22 +18,16 @@ npm install
 yarn install
 ```
 
-### Set the version of Node with Node Version Manager
+### Start Docker container
 
 ```bash
-nvm use
+docker-compose up -d
 ```
 
 ### Run Prisma migrations
 
 ```bash
 npx prisma migrate dev
-```
-
-### Start Docker container
-
-```bash
-docker-compose up -d
 ```
 
 ### Run the project
@@ -55,3 +55,7 @@ npx prisma studio
 ```
 
 Open [http://localhost:5555](http://localhost:5555) in your browser
+
+### Troubleshooting
+
+If you have other docker containers setup on your machine you may encouter "no space left on device" errors. The file space allocation of docker can be increase in Docker Desktop > Preferences > Resources.
