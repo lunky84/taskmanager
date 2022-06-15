@@ -49,7 +49,7 @@ export default function Home({ initialUsers }) {
               lastName,
               role,
               email,
-              avatar
+              avatar,
             };
 
             await fetcher("/api/createUser", { user: body });
@@ -120,7 +120,7 @@ export default function Home({ initialUsers }) {
                   <Header as="h4" image>
                     <Image src={u.avatar} rounded size="mini"></Image>
                     <Header.Content>
-                      {u.firstName + " " + u.lastName}
+                      {u.first_name + " " + u.last_name}
                       <Header.Subheader>{capitalize(u.role)}</Header.Subheader>
                     </Header.Content>
                   </Header>
