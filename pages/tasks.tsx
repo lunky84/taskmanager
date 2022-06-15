@@ -16,6 +16,7 @@ import { Prisma } from "@prisma/client";
 import { fetcher } from "../utils/fetcher";
 import prisma from "../lib/prisma";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export async function getServerSideProps({ query: { page = 1, sort = "asc" } }) {
   const tasks = await fetcher(`/api/task/read?page=${page}&sort=${sort}`, null);
@@ -112,9 +113,9 @@ export default function tasks(props) {
           {tasks.map((t, index) => (
             <Table.Row key={index}>
               <Table.Cell>
-                <Header as="h4" image>
-                  <Header.Content>{t.title}</Header.Content>
-                </Header>
+                <Link href={`/task/${t.task_id}`}>
+                  <a>{t.title}</a>
+                </Link>
               </Table.Cell>
               <Table.Cell>{t.description}</Table.Cell>
               <Table.Cell>
