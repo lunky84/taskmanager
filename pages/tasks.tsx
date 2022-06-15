@@ -17,11 +17,16 @@ import { fetcher } from "../utils/fetcher";
 import prisma from "../lib/prisma";
 import { useRouter } from "next/router";
 
-export async function getServerSideProps({ query: { page = 1 } }) {
-  const tasks = await fetcher(`/api/task/read?page=${page}`, null);
+export async function getServerSideProps({ query: { page = 1, sort = "asc" } }) {
+  const tasks = await fetcher(`/api/task/read?page=${page}&sort=${sort}`, null);
   const count = await prisma.task.count();
   return {
-    props: { initialTasks: tasks, taskCount: count, currentPage: page },
+    props: {
+      initialTasks: tasks,
+      taskCount: count,
+      currentPage: page,
+      sortDirection: sort,
+    },
   };
 }
 
@@ -31,15 +36,26 @@ export default function tasks(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [currentPage, setCurrentPage] = useState(props.currentPage);
+  const [sort, setSort] = useState(props.sortDirection);
+  const [orderBy, setOrderBy] = useState("title");
 
   const pagginationHandler = async (activePage: number) => {
     setCurrentPage(activePage);
-    router.push(`tasks?page=${activePage}`, undefined, { shallow: true });
-    const tasks = await fetcher(`/api/task/read?page=${activePage}`, null);
-    setTasks(tasks);
+    router.query.page = activePage.toString();
+    router.push(router);
+    setTasks(await fetcher(`/api/task/read?page=${activePage}&sort=${sort}`, null));
   };
 
   const pageCount: number = Math.ceil(props.taskCount / 4);
+
+  const sorting = async (col: string) => {
+    const updatedSort = sort === "desc" ? "asc" : "desc";
+    setOrderBy(col);
+    setSort(updatedSort);
+    router.query.sort = updatedSort;
+    router.push(router);
+    setTasks(await fetcher(`/api/task/read?page=${currentPage}&sort=${updatedSort}`, null));
+  };
 
   return (
     <Container style={{ margin: 20 }}>
@@ -78,10 +94,15 @@ export default function tasks(props) {
         <Form.Button>Submit</Form.Button>
       </Form>
 
-      <Table celled>
+      <Table sortable celled>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>Title</Table.HeaderCell>
+            <Table.HeaderCell
+              sorted={orderBy === "title" ? (sort === "asc" ? "ascending" : "descending") : null}
+              onClick={() => sorting("title")}
+            >
+              Title
+            </Table.HeaderCell>
             <Table.HeaderCell>Description</Table.HeaderCell>
             <Table.HeaderCell collapsing>Action</Table.HeaderCell>
           </Table.Row>
