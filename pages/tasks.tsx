@@ -1,22 +1,50 @@
 import React from "react";
-import { Button, Container, Divider, Form, Header, Icon, Image, Table, Pagination } from "semantic-ui-react";
+import {
+  Button,
+  Container,
+  Divider,
+  Form,
+  Header,
+  Icon,
+  Image,
+  Table,
+  Pagination,
+} from "semantic-ui-react";
 import { NextSeo } from "next-seo";
 import { useState } from "react";
 import { Prisma } from "@prisma/client";
 import { fetcher } from "../utils/fetcher";
 import prisma from "../lib/prisma";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps() {
-  const tasks: Prisma.TaskUncheckedCreateInput[] = await prisma.task.findMany();
+  const tasks: Prisma.TaskUncheckedCreateInput[] = await prisma.task.findMany({
+    skip: 0,
+    take: 4,
+  });
+
+  const count = await prisma.task.count();
+
   return {
-    props: { initialTasks: tasks },
+    props: { initialTasks: tasks, taskCount: count },
   };
 }
 
-export default function tasks({ initialTasks }) {
-  const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(initialTasks);
+export default function tasks(props) {
+  const router = useRouter();
+  const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const pagginationHandler = async (data) => {
+    setCurrentPage(data.activePage);
+    router.push(`tasks?page=${data.activePage}`, undefined, { shallow: true });
+    const tasks = await fetcher(`/api/task/read?page=${data.activePage}`, null);
+    setTasks(tasks);
+  };
+
+  const pageCount: number = Math.ceil(props.taskCount / 4);
 
   return (
     <Container style={{ margin: 20 }}>
@@ -100,7 +128,8 @@ export default function tasks({ initialTasks }) {
         firstItem={null}
         lastItem={null}
         siblingRange={1}
-        totalPages={10}
+        totalPages={pageCount}
+        onPageChange={(event, data) => pagginationHandler(data)}
       />
     </Container>
   );
