@@ -31,7 +31,7 @@ export async function getServerSideProps({ query: { page = 1, sort = "asc" } }) 
   };
 }
 
-export default function tasks(props) {
+export default function Tasks(props) {
   const router = useRouter();
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
   const [title, setTitle] = useState("");
@@ -140,7 +140,6 @@ export default function tasks(props) {
 
       <Pagination
         boundaryRange={0}
-        defaultActivePage={1}
         ellipsisItem={null}
         firstItem={null}
         lastItem={null}

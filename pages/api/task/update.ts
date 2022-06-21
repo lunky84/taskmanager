@@ -9,11 +9,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const { task } = req.body;
-    const savedTask = await prisma.task.create({
+    const { task, id } = req.body;
+    const updatedTask = await prisma.task.update({
+      where: {
+        task_id: id,
+      },
       data: task,
     });
-    res.status(200).json(savedTask);
+
+    res.status(200).json(updatedTask);
   } catch (error) {
     res.status(400).json({ message: "Something went wrong" });
   }
