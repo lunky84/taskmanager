@@ -17,6 +17,8 @@ import { fetcher } from "../utils/fetcher";
 import prisma from "../lib/prisma";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import SemanticDatepicker from 'react-semantic-ui-datepickers';
+import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 
 export async function getServerSideProps({ query: { page = 1, sort = "asc" } }) {
   const tasks = await fetcher(`/api/task/read?page=${page}&sort=${sort}`, null);
@@ -39,6 +41,8 @@ export default function Tasks(props) {
   const [currentPage, setCurrentPage] = useState(props.currentPage);
   const [sort, setSort] = useState(props.sortDirection);
   const [orderBy, setOrderBy] = useState("title");
+  const [currentDate, setNewDate] = useState(null);
+  const onChange = (event, data) => setNewDate(data.value);
 
   const pagginationHandler = async (activePage: number) => {
     setCurrentPage(activePage);
@@ -84,6 +88,7 @@ export default function Tasks(props) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+          <SemanticDatepicker label="Due date" onChange={onChange} />
           <Form.TextArea
             label="Description"
             placeholder="Tell us more"
