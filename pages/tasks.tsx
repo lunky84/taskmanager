@@ -21,14 +21,15 @@ import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { format } from 'date-fns'
 
-export async function getServerSideProps({ query: { page = 1, sort = "asc" } }) {
-  const tasks = await fetcher(`/api/task/read?page=${page}&sort=${sort}`, null);
+export async function getServerSideProps({ query: { page = 1, orderBy = "title", sort = "asc" } }) {
+  const tasks = await fetcher(`/api/task/read?page=${page}&orderBy=${orderBy}&sort=${sort}`, null);
   const count = await prisma.task.count();
   return {
     props: {
       initialTasks: tasks,
       taskCount: count,
       currentPage: page,
+      orderBy: orderBy,
       sortDirection: sort,
     },
   };
@@ -41,7 +42,7 @@ export default function Tasks(props) {
   const [description, setDescription] = useState("");
   const [currentPage, setCurrentPage] = useState(props.currentPage);
   const [sort, setSort] = useState(props.sortDirection);
-  const [orderBy, setOrderBy] = useState("title");
+  const [orderBy, setOrderBy] = useState(props.orderBy);
   const [currentDate, setNewDate] = useState(null);
   const onChange = (event, data) => setNewDate(data.value);
 
@@ -49,7 +50,7 @@ export default function Tasks(props) {
     setCurrentPage(activePage);
     router.query.page = activePage.toString();
     router.push(router);
-    setTasks(await fetcher(`/api/task/read?page=${activePage}&sort=${sort}`, null));
+    setTasks(await fetcher(`/api/task/read?page=${activePage}&orderBy=${orderBy}&sort=${sort}`, null));
   };
 
   const pageCount: number = Math.ceil(props.taskCount / 4);
@@ -58,6 +59,7 @@ export default function Tasks(props) {
     const updatedSort = sort === "desc" ? "asc" : "desc";
     setOrderBy(col);
     setSort(updatedSort);
+    router.query.orderBy = col;
     router.query.sort = updatedSort;
     router.push(router);
     setTasks(await fetcher(`/api/task/read?page=${currentPage}&sort=${updatedSort}`, null));
@@ -111,7 +113,10 @@ export default function Tasks(props) {
               Title
             </Table.HeaderCell>
             <Table.HeaderCell>Description</Table.HeaderCell>
-            <Table.HeaderCell>Created</Table.HeaderCell>
+            <Table.HeaderCell
+              sorted={orderBy === "createAt" ? (sort === "asc" ? "ascending" : "descending") : null}
+              onClick={() => sorting("createAt")}
+            >Created</Table.HeaderCell>
             <Table.HeaderCell collapsing>Action</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
