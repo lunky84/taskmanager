@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
+import { format } from 'date-fns'
 
 export async function getServerSideProps({ query: { page = 1, sort = "asc" } }) {
   const tasks = await fetcher(`/api/task/read?page=${page}&sort=${sort}`, null);
@@ -110,6 +111,7 @@ export default function Tasks(props) {
               Title
             </Table.HeaderCell>
             <Table.HeaderCell>Description</Table.HeaderCell>
+            <Table.HeaderCell>Created</Table.HeaderCell>
             <Table.HeaderCell collapsing>Action</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
@@ -123,6 +125,7 @@ export default function Tasks(props) {
                 </Link>
               </Table.Cell>
               <Table.Cell>{t.description}</Table.Cell>
+              <Table.Cell>{ format(new Date(t.createAt), 'yyyy-MM-dd') }</Table.Cell>
               <Table.Cell>
                 <Button
                   animated="fade"
