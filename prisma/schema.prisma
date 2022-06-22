@@ -26,4 +26,6 @@ model Task {
   description String
   author_id   Int?
   author      User?  @relation(fields: [author_id], references: [user_id])
+  createAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
