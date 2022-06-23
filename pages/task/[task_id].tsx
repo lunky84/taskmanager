@@ -17,7 +17,14 @@ export async function getServerSideProps({ query: { task_id } }) {
 export default function Task(props) {
   const [title, setTitle] = useState(props.task.title);
   const [description, setDescription] = useState(props.task.description);
+  const [status, setStatus] = useState(props.task.status);
   const router = useRouter();
+
+  const options = [
+    { text: 'Pending', value: 'Pending' },
+    { text: 'Active', value: 'Active' },
+    { text: 'Completed', value: 'Completed' },
+  ]
 
   return (
     <>
@@ -31,6 +38,7 @@ export default function Task(props) {
             const body: Prisma.TaskCreateInput = {
               title,
               description,
+              status
             };
             await fetcher("/api/task/update", { task: body, id: props.task.task_id });
             router.push("/tasks")
@@ -50,6 +58,13 @@ export default function Task(props) {
               style={{ minHeight: 100 }}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+            />
+            <Form.Select
+              fluid
+              label="Status"
+              value={status}
+              options={options}
+              onChange={(e, data) => setStatus(data.value)}
             />
           </Form.Group>
           <Form.Button>Submit</Form.Button>

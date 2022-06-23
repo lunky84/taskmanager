@@ -40,6 +40,7 @@ export default function Tasks(props) {
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [status, setStatus] = useState("Pending");
   const [currentPage, setCurrentPage] = useState(props.currentPage);
   const [sort, setSort] = useState(props.sortDirection);
   const [orderBy, setOrderBy] = useState(props.orderBy);
@@ -65,6 +66,12 @@ export default function Tasks(props) {
     setTasks(await fetcher(`/api/task/read?page=${currentPage}&sort=${updatedSort}`, null));
   };
 
+  const options = [
+    { text: 'Pending', value: 'Pending' },
+    { text: 'Active', value: 'Active' },
+    { text: 'Completed', value: 'Completed' },
+  ]
+
   return (
     <Container style={{ margin: 20 }}>
       <NextSeo title="Tasks" description="The tasks page" />
@@ -75,12 +82,14 @@ export default function Tasks(props) {
           const body: Prisma.TaskCreateInput = {
             title,
             description,
+            status
           };
 
           await fetcher("/api/task/create", { task: body });
           await setTasks([...tasks, body]);
           setTitle("");
           setDescription("");
+          setDescription("Pending");
         }}
       >
         <Form.Group widths="equal">
@@ -99,6 +108,13 @@ export default function Tasks(props) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+          <Form.Select
+            fluid
+            label='Status'
+            value={status}
+            options={options}
+            onChange={(e, data) => setStatus(data.value)}
+          />
         </Form.Group>
         <Form.Button>Submit</Form.Button>
       </Form>
@@ -113,6 +129,7 @@ export default function Tasks(props) {
               Title
             </Table.HeaderCell>
             <Table.HeaderCell>Description</Table.HeaderCell>
+            <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell
               sorted={orderBy === "createAt" ? (sort === "asc" ? "ascending" : "descending") : null}
               onClick={() => sorting("createAt")}
@@ -130,6 +147,7 @@ export default function Tasks(props) {
                 </Link>
               </Table.Cell>
               <Table.Cell>{t.description}</Table.Cell>
+              <Table.Cell>{t.status}</Table.Cell>
               <Table.Cell>{ format(new Date(t.createAt), 'yyyy-MM-dd') }</Table.Cell>
               <Table.Cell>
                 <Button
