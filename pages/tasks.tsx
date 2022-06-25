@@ -17,8 +17,6 @@ import { fetcher } from "../utils/fetcher";
 import prisma from "../lib/prisma";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import SemanticDatepicker from 'react-semantic-ui-datepickers';
-import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { format } from 'date-fns'
 
 export async function getServerSideProps({ query: { page = 1, orderBy = "title", sort = "asc" } }) {
@@ -38,15 +36,12 @@ export async function getServerSideProps({ query: { page = 1, orderBy = "title",
 export default function Tasks(props) {
   const router = useRouter();
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [status, setStatus] = useState("Pending");
   const [priority, setPriority] = useState(2);
   const [currentPage, setCurrentPage] = useState(props.currentPage);
   const [sort, setSort] = useState(props.sortDirection);
   const [orderBy, setOrderBy] = useState(props.orderBy);
   const [currentDate, setNewDate] = useState(null);
-  const onChange = (event, data) => setNewDate(data.value);
 
   const pagginationHandler = async (activePage: number) => {
     setCurrentPage(activePage);
@@ -67,73 +62,16 @@ export default function Tasks(props) {
     setTasks(await fetcher(`/api/task/read?page=${currentPage}&sort=${updatedSort}`, null));
   };
 
-  const statusOptions = [
-    { text: 'Pending', value: 'Pending' },
-    { text: 'Active', value: 'Active' },
-    { text: 'Completed', value: 'Completed' },
-  ]
-
-  const priorityOptions = [
-    { text: 'Low', value: 1 },
-    { text: 'Medium', value: 2 },
-    { text: 'High', value: 3 },
-  ]
-
   return (
     <Container style={{ margin: 20 }}>
       <NextSeo title="Tasks" description="The tasks page" />
 
       <h1>Tasks</h1>
-      <Form
-        onSubmit={async () => {
-          const body: Prisma.TaskCreateInput = {
-            title,
-            description,
-            status,
-            priority
-          };
 
-          await fetcher("/api/task/create", { task: body });
-          await setTasks([...tasks, body]);
-          setTitle("");
-          setDescription("");
-          setDescription("Pending");
-        }}
-      >
-        <Form.Group widths="equal">
-          <Form.Input
-            fluid
-            label="Title"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <SemanticDatepicker label="Due date" onChange={onChange} />
-          <Form.TextArea
-            label="Description"
-            placeholder="Tell us more"
-            style={{ minHeight: 100 }}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <Form.Select
-            fluid
-            label='Status'
-            value={status}
-            options={statusOptions}
-            onChange={(e, data) => setStatus(data.value)}
-          />
-          <Form.Select
-            fluid
-            label='Priority'
-            value={priority}
-            options={priorityOptions}
-            onChange={(e, data) => setPriority(data.value)}
-          />
-        </Form.Group>
-        <Form.Button>Submit</Form.Button>
-      </Form>
-
+      <Link href="/create-task" passHref>
+        <Button>Create Task</Button>
+      </Link>
+      
       <Table sortable celled>
         <Table.Header>
           <Table.Row>
