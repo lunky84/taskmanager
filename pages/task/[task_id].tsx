@@ -1,9 +1,10 @@
-import { Container, Form } from "semantic-ui-react";
+import { Container, Form, Button } from "semantic-ui-react";
 import { NextSeo } from "next-seo";
 import { fetcher } from "../../utils/fetcher";
 import { Prisma } from "@prisma/client";
 import { useState } from "react";
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import Link from "next/link";
 
 export async function getServerSideProps({ query: { task_id } }) {
   const task = await fetcher(`/api/task/read?task_id=${task_id}`, null);
@@ -82,7 +83,12 @@ export default function Task(props) {
               onChange={(e, data) => setPriority(data.value)}
             />
           </Form.Group>
-          <Form.Button>Submit</Form.Button>
+          <Button primary type="submit">Save</Button>
+          <Link href='/tasks' passHref>
+            <Button>Cancel</Button>
+          </Link>
+
+
         </Form>
       </Container>
     </>
