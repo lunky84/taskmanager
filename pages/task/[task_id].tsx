@@ -18,12 +18,19 @@ export default function Task(props) {
   const [title, setTitle] = useState(props.task.title);
   const [description, setDescription] = useState(props.task.description);
   const [status, setStatus] = useState(props.task.status);
+  const [priority, setPriority] = useState(props.task.priority);
   const router = useRouter();
 
-  const options = [
+  const statusOptions = [
     { text: 'Pending', value: 'Pending' },
     { text: 'Active', value: 'Active' },
     { text: 'Completed', value: 'Completed' },
+  ]
+
+  const priorityOptions = [
+    { text: 'Low', value: 1 },
+    { text: 'Medium', value: 2 },
+    { text: 'High', value: 3 },
   ]
 
   return (
@@ -38,7 +45,8 @@ export default function Task(props) {
             const body: Prisma.TaskCreateInput = {
               title,
               description,
-              status
+              status,
+              priority
             };
             await fetcher("/api/task/update", { task: body, id: props.task.task_id });
             router.push("/tasks")
@@ -63,8 +71,15 @@ export default function Task(props) {
               fluid
               label="Status"
               value={status}
-              options={options}
+              options={statusOptions}
               onChange={(e, data) => setStatus(data.value)}
+            />
+            <Form.Select
+              fluid
+              label='Priority'
+              value={priority}
+              options={priorityOptions}
+              onChange={(e, data) => setPriority(data.value)}
             />
           </Form.Group>
           <Form.Button>Submit</Form.Button>

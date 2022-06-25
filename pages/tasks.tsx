@@ -41,6 +41,7 @@ export default function Tasks(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("Pending");
+  const [priority, setPriority] = useState(2);
   const [currentPage, setCurrentPage] = useState(props.currentPage);
   const [sort, setSort] = useState(props.sortDirection);
   const [orderBy, setOrderBy] = useState(props.orderBy);
@@ -66,10 +67,16 @@ export default function Tasks(props) {
     setTasks(await fetcher(`/api/task/read?page=${currentPage}&sort=${updatedSort}`, null));
   };
 
-  const options = [
+  const statusOptions = [
     { text: 'Pending', value: 'Pending' },
     { text: 'Active', value: 'Active' },
     { text: 'Completed', value: 'Completed' },
+  ]
+
+  const priorityOptions = [
+    { text: 'Low', value: 1 },
+    { text: 'Medium', value: 2 },
+    { text: 'High', value: 3 },
   ]
 
   return (
@@ -82,7 +89,8 @@ export default function Tasks(props) {
           const body: Prisma.TaskCreateInput = {
             title,
             description,
-            status
+            status,
+            priority
           };
 
           await fetcher("/api/task/create", { task: body });
@@ -112,8 +120,15 @@ export default function Tasks(props) {
             fluid
             label='Status'
             value={status}
-            options={options}
+            options={statusOptions}
             onChange={(e, data) => setStatus(data.value)}
+          />
+          <Form.Select
+            fluid
+            label='Priority'
+            value={priority}
+            options={priorityOptions}
+            onChange={(e, data) => setPriority(data.value)}
           />
         </Form.Group>
         <Form.Button>Submit</Form.Button>
