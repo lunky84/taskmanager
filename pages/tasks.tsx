@@ -83,6 +83,7 @@ export default function Tasks(props) {
             </Table.HeaderCell>
             <Table.HeaderCell>Description</Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
+            <Table.HeaderCell>Priority</Table.HeaderCell>
             <Table.HeaderCell
               sorted={orderBy === "createAt" ? (sort === "asc" ? "ascending" : "descending") : null}
               onClick={() => sorting("createAt")}
@@ -101,6 +102,7 @@ export default function Tasks(props) {
               </Table.Cell>
               <Table.Cell>{t.description}</Table.Cell>
               <Table.Cell>{t.status}</Table.Cell>
+              <Table.Cell>{t.priority}</Table.Cell>
               <Table.Cell>{ format(new Date(t.createAt), 'yyyy-MM-dd') }</Table.Cell>
               <Table.Cell>
                 <Button
