@@ -13,8 +13,9 @@ export default function TaskForm(props) {
   const [description, setDescription] = useState(props.task.description);
   const [status, setStatus] = useState(props.task.status);
   const [priority, setPriority] = useState(props.task.priority);
+  const [dateDue, setDateDue] = useState(props.task.date_due);
   const router = useRouter();
-  const onChange = (event, data) => setNewDate(data.value);
+  const onChange = (event, data) => setDateDue(data.value);
 
   const statusOptions = [
     { text: "Pending", value: "Pending" },
@@ -35,7 +36,8 @@ export default function TaskForm(props) {
           title,
           description,
           status,
-          priority
+          priority,
+          date_due: dateDue
         };
         if (props.task.task_id === undefined) {
           await fetcher("/api/task/create", { task: body });
@@ -62,7 +64,7 @@ export default function TaskForm(props) {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-      <SemanticDatepicker label="Due date" onChange={onChange} />
+      <SemanticDatepicker label="Date due" onChange={onChange} value={dateDue === null ? null : new Date(dateDue)} />
       <Form.Select
         label="Status"
         value={status}

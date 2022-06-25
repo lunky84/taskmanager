@@ -27,6 +27,7 @@ model Task {
   author_id   Int?
   status      String
   priority    Int
+  date_due     DateTime?
   author      User?  @relation(fields: [author_id], references: [user_id])
   createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt

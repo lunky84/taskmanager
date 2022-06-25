@@ -7,7 +7,8 @@ export default function CreateTask() {
         title: "",
         description: "",
         status: "Pending",
-        priority: 2
+        priority: 2,
+        date_due: null
     }
 
   return (
