@@ -6,8 +6,18 @@ import { Prisma } from "@prisma/client";
 import { fetcher } from "../utils/fetcher";
 import prisma from "../lib/prisma";
 import { useState } from "react";
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Pie, Line } from 'react-chartjs-2';
+import { Chart as ChartJS, 
+  ArcElement, 
+  Tooltip, 
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+} from 'chart.js';
+import { faker } from '@faker-js/faker';
 
 
 export async function getServerSideProps() {
@@ -17,15 +27,57 @@ export async function getServerSideProps() {
   };
 }
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+  ArcElement, 
+  Tooltip, 
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+);
 
-const options = [
+const lineOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: 'Chart.js Line Chart',
+    },
+  },
+};
+
+const lineLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+
+const lineData = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [
+    {
+      label: 'Dataset 1',
+      data: lineLabels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    },
+    {
+      label: 'Dataset 2',
+      data: lineLabels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+      borderColor: 'rgb(24, 62, 87)',
+      backgroundColor: 'rgba(53, 162, 235, 0.5)',
+    },
+  ],
+};
+
+const pieOptions = [
   { key: "d", text: "DEVELOPER", value: "DEVELOPER" },
   { key: "u", text: "USER", value: "USER" },
   { key: "a", text: "ADMIN", value: "ADMIN" },
 ];
 
-const data = {
+const pieData = {
   labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
   datasets: [
     {
@@ -126,7 +178,7 @@ export default function Home({ initialUsers }) {
               fluid
               label="Role"
               placeholder="Role"
-              options={options}
+              pieOptions={pieOptions}
               value={role}
               onChange={handleChange}
             />
@@ -177,7 +229,12 @@ export default function Home({ initialUsers }) {
             ))}
           </Table.Body>
         </Table>
-        <Pie data={data} />
+        <div style={{width: "300px"}}>
+          <Pie data={pieData} />
+        </div>
+        <div style={{width: "900px"}}>
+          <Line options={lineOptions} data={lineData} />
+        </div>
       </Container>
     </>
   );

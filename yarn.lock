@@ -46,6 +46,11 @@
     "minimatch" "^3.1.2"
     "strip-json-comments" "^3.1.1"
 
+"@faker-js/faker@^7.3.0":
+  "integrity" "sha512-1W0PZezq2rxlAssoWemi9gFRD8IQxvf0FPL5Km3TOmGHFG7ib0TbFBJ0yC7D/1NsxunjNTK6WjUXV8ao/mKZ5w=="
+  "resolved" "https://registry.npmjs.org/@faker-js/faker/-/faker-7.3.0.tgz"
+  "version" "7.3.0"
+
 "@fluentui/react-component-event-listener@~0.51.6":
   "integrity" "sha512-NjVm+crN0T9A7vITL8alZeHnuV8zi2gos0nezU/2YOxaUAB9E4zKiPxt/6k5U50rJs/gj8Nu45iXxnjO41HbZg=="
   "resolved" "https://registry.npmjs.org/@fluentui/react-component-event-listener/-/react-component-event-listener-0.51.7.tgz"
