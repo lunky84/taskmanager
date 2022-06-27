@@ -19,8 +19,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { format } from 'date-fns'
 
-export async function getServerSideProps({ query: { page = 1, orderBy = "title", sort = "asc" } }) {
-  const tasks = await fetcher(`/api/task/read?page=${page}&orderBy=${orderBy}&sort=${sort}`, null);
+export async function getServerSideProps({ query: { page = "1", orderBy = "title", sort = "asc", priority = "all" } }) {
+  const tasks = await fetcher(`/api/task/read?page=${page}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null);
   const count = await prisma.task.count();
   return {
     props: {
@@ -33,21 +33,40 @@ export async function getServerSideProps({ query: { page = 1, orderBy = "title",
   };
 }
 
-export default function Tasks(props) {
+export default function Tasks(props: any) {
   const router = useRouter();
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
   const [status, setStatus] = useState("Pending");
-  const [priority, setPriority] = useState(2);
+  const [priority, setPriority] = useState("all");
   const [currentPage, setCurrentPage] = useState(props.currentPage);
   const [sort, setSort] = useState(props.sortDirection);
   const [orderBy, setOrderBy] = useState(props.orderBy);
   const [currentDate, setNewDate] = useState(null);
 
-  const pagginationHandler = async (activePage: number) => {
-    setCurrentPage(activePage);
-    router.query.page = activePage.toString();
+
+
+
+  useEffect(() => {
+    console.log("currentPage = " + currentPage);
+    console.log("sort = " + sort);
+    console.log("orderBy = " + orderBy);
+    console.log("priority = " + priority);
+
+    router.query.page = currentPage;
+    router.query.sort = sort;
+    router.query.orderBy = orderBy;
+    router.query.priority = priority;
     router.push(router);
-    setTasks(await fetcher(`/api/task/read?page=${activePage}&orderBy=${orderBy}&sort=${sort}`, null));
+
+    const fetchData = async () => {
+      setTasks(await fetcher(`/api/task/read?page=${currentPage}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null));
+    };
+
+    fetchData();    
+  }, [currentPage, sort, orderBy, priority]);
+
+  const pagginationHandler = (activePage: number) => {
+    setCurrentPage(activePage);
   };
 
   const pageCount: number = Math.ceil(props.taskCount / 4);
@@ -56,17 +75,36 @@ export default function Tasks(props) {
     const updatedSort = sort === "desc" ? "asc" : "desc";
     setOrderBy(col);
     setSort(updatedSort);
-    router.query.orderBy = col;
-    router.query.sort = updatedSort;
-    router.push(router);
-    setTasks(await fetcher(`/api/task/read?page=${currentPage}&sort=${updatedSort}`, null));
   };
+
+  const priorityOptions = [
+    { text: "All", value: "all" },
+    { text: "Low", value: "1" },
+    { text: "Medium", value: "2" },
+    { text: "High", value: "3" },
+  ];
+
+  const filterResults = async (newPriority: string) => {
+    setPriority(newPriority);
+    setCurrentPage(1);
+  }
 
   return (
     <Container style={{ margin: 20 }}>
       <NextSeo title="Tasks" description="The tasks page" />
 
       <h1>Tasks</h1>
+
+
+      <Form.Select
+        label="Priority"
+        value={priority}
+        options={priorityOptions}
+        onChange={(e, data) => {
+          filterResults(data.value);
+        }}
+      />
+
 
       <Link href="/create-task" passHref>
         <Button>Create Task</Button>
