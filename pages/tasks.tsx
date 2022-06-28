@@ -20,8 +20,7 @@ import Link from "next/link";
 import { format } from 'date-fns'
 
 export async function getServerSideProps({ query: { page = "1", orderBy = "title", sort = "asc", priority = "all" } }) {
-  const tasks = await fetcher(`/api/task/read?page=${page}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null);
-  const count = await prisma.task.count();
+  const {tasks, count} = await fetcher(`/api/task/read?page=${page}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null);
   return {
     props: {
       initialTasks: tasks,
@@ -42,6 +41,7 @@ export default function Tasks(props: any) {
   const [sort, setSort] = useState(props.sortDirection);
   const [orderBy, setOrderBy] = useState(props.orderBy);
   const [currentDate, setNewDate] = useState(null);
+  const [pageCount, setPageCount] = useState(Math.ceil(props.taskCount / 4));
 
 
 
@@ -59,7 +59,9 @@ export default function Tasks(props: any) {
     router.push(router);
 
     const fetchData = async () => {
-      setTasks(await fetcher(`/api/task/read?page=${currentPage}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null));
+      const {tasks, count} = await fetcher(`/api/task/read?page=${currentPage}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null);
+      setTasks(tasks);
+      setPageCount(Math.ceil(count / 4));
     };
 
     fetchData();    
@@ -68,8 +70,6 @@ export default function Tasks(props: any) {
   const pagginationHandler = (activePage: number) => {
     setCurrentPage(activePage);
   };
-
-  const pageCount: number = Math.ceil(props.taskCount / 4);
 
   const sorting = async (col: string) => {
     const updatedSort = sort === "desc" ? "asc" : "desc";
@@ -95,15 +95,18 @@ export default function Tasks(props: any) {
 
       <h1>Tasks</h1>
 
+      <Form>
+        <Form.Select
+          label="Priority"
+          value={priority}
+          options={priorityOptions}
+          onChange={(e, data) => {
+            filterResults(data.value);
+          }}
+        />
+      </Form>
 
-      <Form.Select
-        label="Priority"
-        value={priority}
-        options={priorityOptions}
-        onChange={(e, data) => {
-          filterResults(data.value);
-        }}
-      />
+      <br />
 
 
       <Link href="/create-task" passHref>
