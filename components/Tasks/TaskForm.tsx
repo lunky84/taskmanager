@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Form, Button } from "semantic-ui-react";
+import { Form, Button, FormComponent } from "semantic-ui-react";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { Prisma } from "@prisma/client";
@@ -8,14 +8,26 @@ import { fetcher } from "../../utils/fetcher";
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 
-export default function TaskForm(props) {
+interface props{
+  task: {
+    task_id: number
+    title: string,
+    description: string,
+    status: string,
+    priority: number,
+    date_due: Date
+  }
+}
+
+
+const TaskForm = (props: props) => {
   const [title, setTitle] = useState(props.task.title);
   const [description, setDescription] = useState(props.task.description);
   const [status, setStatus] = useState(props.task.status);
   const [priority, setPriority] = useState(props.task.priority);
   const [dateDue, setDateDue] = useState(props.task.date_due);
   const router = useRouter();
-  const onChange = (event, data) => setDateDue(data.value);
+  const onChange = (event: any, data: any) => setDateDue(data.value);
 
   const statusOptions = [
     { text: "Pending", value: "Pending" },
@@ -29,9 +41,10 @@ export default function TaskForm(props) {
     { text: "High", value: 3 },
   ];
 
+  // const {form: Form} = props;
   return (
-    <Form
-      onSubmit={async () => {
+    <div>
+    <Form onSubmit={async () => {
         const body: Prisma.TaskCreateInput = {
           title,
           description,
@@ -85,5 +98,8 @@ export default function TaskForm(props) {
         <Button>Cancel</Button>
       </Link>
     </Form>
+    </div>
   );
 }
+
+export default TaskForm;
