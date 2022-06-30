@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import Link from "next/link";
 import { Form, Button, FormComponent } from "semantic-ui-react";
 import { useState } from "react";
@@ -7,6 +7,8 @@ import { Prisma } from "@prisma/client";
 import { fetcher } from "../../utils/fetcher";
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
+
+import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
 
 interface props{
   task: {
@@ -20,11 +22,11 @@ interface props{
 }
 
 
-const TaskForm = (props: props) => {
+const TaskForm:FC<props> = (props) => {
   const [title, setTitle] = useState(props.task.title);
   const [description, setDescription] = useState(props.task.description);
-  const [status, setStatus] = useState(props.task.status);
-  const [priority, setPriority] = useState(props.task.priority);
+  const [status, setStatus] = useState<any | null>(props.task.status);
+  const [priority, setPriority] = useState<any | null>(props.task.priority);
   const [dateDue, setDateDue] = useState(props.task.date_due);
   const router = useRouter();
   const onChange = (event: any, data: any) => setDateDue(data.value);
@@ -82,7 +84,7 @@ const TaskForm = (props: props) => {
         label="Status"
         value={status}
         options={statusOptions}
-        onChange={(e, data) => setStatus(data.value)}
+        onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => setStatus(data.value)}
       />
       <Form.Select
         label="Priority"
