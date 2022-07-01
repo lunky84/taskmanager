@@ -1,24 +1,20 @@
-import Head from "next/head";
-import { Button, Container, Divider, Form, Header, Icon, Image, Table } from "semantic-ui-react";
-import styles from "../styles/Home.module.css";
-import pkg from "semantic-ui-react/package.json";
-import { Prisma } from "@prisma/client";
-import { fetcher } from "../utils/fetcher";
-import prisma from "../lib/prisma";
-import { useState } from "react";
-import { Pie, Line } from 'react-chartjs-2';
-import { Chart as ChartJS, 
-  ArcElement, 
-  Tooltip, 
-  Legend,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-} from 'chart.js';
 import { faker } from '@faker-js/faker';
-
+import { Prisma } from "@prisma/client";
+import {
+  ArcElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend, LinearScale, LineElement, PointElement,
+  Title,
+  Tooltip
+} from 'chart.js';
+import Head from "next/head";
+import { useState } from "react";
+import { Line, Pie } from 'react-chartjs-2';
+import { Button, Container, Divider, Form, Header, Icon, Image, Table } from "semantic-ui-react";
+import pkg from "semantic-ui-react/package.json";
+import prisma from "../lib/prisma";
+import { fetcher } from "../utils/fetcher";
 
 export async function getServerSideProps() {
   const users: Prisma.UserUncheckedCreateInput[] = await prisma.user.findMany();

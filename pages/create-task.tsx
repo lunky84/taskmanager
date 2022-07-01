@@ -1,6 +1,6 @@
-import { Container } from "semantic-ui-react";
-import { NextSeo } from "next-seo";
 import TaskForm from "@/components/Tasks/TaskForm";
+import { NextSeo } from "next-seo";
+import { Container } from "semantic-ui-react";
 
 export default function CreateTask() {
     const task = {

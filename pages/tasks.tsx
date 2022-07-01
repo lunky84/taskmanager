@@ -1,21 +1,23 @@
 import React, { useEffect } from "react";
+import { useState } from "react";
+
+import { Prisma } from "@prisma/client";
+import { format } from 'date-fns';
+import { NextSeo } from "next-seo";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import {
   Button,
   Container,
   Form,
   Icon,
-  Table,
   Pagination,
+  Table,
 } from "semantic-ui-react";
-import { NextSeo } from "next-seo";
-import { useState } from "react";
-import { Prisma } from "@prisma/client";
-import { fetcher } from "../utils/fetcher";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { format } from 'date-fns';
-import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
 import { PaginationProps } from "semantic-ui-react/dist/commonjs/addons/Pagination/Pagination";
+import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
+
+import { fetcher } from "../utils/fetcher";
 
 export async function getServerSideProps({ query: { page = "1", orderBy = "title", sort = "asc", priority = "all" } }) {
   const {tasks, count} = await fetcher(`/api/task/read?page=${page}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null);

@@ -1,8 +1,8 @@
-import { Container } from "semantic-ui-react";
-import { NextSeo } from "next-seo";
-import { fetcher } from "../../utils/fetcher";
 import TaskForm from "@/components/Tasks/TaskForm";
-import { format } from 'date-fns'
+import { format } from 'date-fns';
+import { NextSeo } from "next-seo";
+import { Container } from "semantic-ui-react";
+import { fetcher } from "../../utils/fetcher";
 
 export async function getServerSideProps({ query: { task_id } }) {
   const task = await fetcher(`/api/task/read?task_id=${task_id}`, null);
