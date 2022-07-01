@@ -17,7 +17,8 @@ import { fetcher } from "../utils/fetcher";
 import prisma from "../lib/prisma";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { format } from 'date-fns'
+import { format } from 'date-fns';
+import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
 
 export async function getServerSideProps({ query: { page = "1", orderBy = "title", sort = "asc", priority = "all" } }) {
   const {tasks, count} = await fetcher(`/api/task/read?page=${page}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null);
@@ -38,8 +39,12 @@ export default function Tasks(props: any) {
   const [status, setStatus] = useState("Pending");
   const [priority, setPriority] = useState("all");
   const [currentPage, setCurrentPage] = useState(props.currentPage);
-  const [sort, setSort] = useState(props.sortDirection);
-  const [orderBy, setOrderBy] = useState(props.orderBy);
+  const [order, setOrder] = useState({
+    sort: props.sortDirection,
+    orderBy: props.orderBy
+  });
+
+
   const [currentDate, setNewDate] = useState(null);
   const [pageCount, setPageCount] = useState(Math.ceil(props.taskCount / 4));
 
@@ -48,33 +53,35 @@ export default function Tasks(props: any) {
 
   useEffect(() => {
     console.log("currentPage = " + currentPage);
-    console.log("sort = " + sort);
-    console.log("orderBy = " + orderBy);
+    console.log("sort = " + order.sort);
+    console.log("orderBy = " + order.orderBy);
     console.log("priority = " + priority);
 
     router.query.page = currentPage;
-    router.query.sort = sort;
-    router.query.orderBy = orderBy;
+    router.query.sort = order.sort;
+    router.query.orderBy = order.orderBy;
     router.query.priority = priority;
     router.push(router);
 
     const fetchData = async () => {
-      const {tasks, count} = await fetcher(`/api/task/read?page=${currentPage}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null);
+      const {tasks, count} = await fetcher(`/api/task/read?page=${currentPage}&orderBy=${order.orderBy}&sort=${order.sort}&priority=${priority}`, null);
       setTasks(tasks);
       setPageCount(Math.ceil(count / 4));
     };
 
     fetchData();    
-  }, [currentPage, sort, orderBy, priority]);
+  }, [currentPage, order, priority]);
 
   const pagginationHandler = (activePage: number) => {
     setCurrentPage(activePage);
   };
 
   const sorting = async (col: string) => {
-    const updatedSort = sort === "desc" ? "asc" : "desc";
-    setOrderBy(col);
-    setSort(updatedSort);
+    const updatedSort = order.sort === "desc" ? "asc" : "desc";
+    setOrder({
+      sort: updatedSort,
+      orderBy: col
+    });
   };
 
   const priorityOptions = [
@@ -84,7 +91,7 @@ export default function Tasks(props: any) {
     { text: "High", value: "3" },
   ];
 
-  const filterResults = async (newPriority: string) => {
+  const filterResults = async (newPriority: any) => {
     setPriority(newPriority);
     setCurrentPage(1);
   }
@@ -100,7 +107,7 @@ export default function Tasks(props: any) {
           label="Priority"
           value={priority}
           options={priorityOptions}
-          onChange={(e, data) => {
+          onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
             filterResults(data.value);
           }}
         />
@@ -117,7 +124,7 @@ export default function Tasks(props: any) {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
-              sorted={orderBy === "title" ? (sort === "asc" ? "ascending" : "descending") : null}
+              sorted={order.orderBy === "title" ? (order.sort === "asc" ? "ascending" : "descending") : false}
               onClick={() => sorting("title")}
             >
               Title
@@ -126,7 +133,7 @@ export default function Tasks(props: any) {
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Priority</Table.HeaderCell>
             <Table.HeaderCell
-              sorted={orderBy === "createAt" ? (sort === "asc" ? "ascending" : "descending") : null}
+              sorted={order.orderBy === "createAt" ? (order.sort === "asc" ? "ascending" : "descending") : false}
               onClick={() => sorting("createAt")}
             >Created</Table.HeaderCell>
             <Table.HeaderCell collapsing>Action</Table.HeaderCell>

@@ -7,7 +7,6 @@ import { Prisma } from "@prisma/client";
 import { fetcher } from "../../utils/fetcher";
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
-
 import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
 
 interface props{
