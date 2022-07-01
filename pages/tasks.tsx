@@ -2,11 +2,8 @@ import React, { useEffect } from "react";
 import {
   Button,
   Container,
-  Divider,
   Form,
-  Header,
   Icon,
-  Image,
   Table,
   Pagination,
 } from "semantic-ui-react";
@@ -14,11 +11,11 @@ import { NextSeo } from "next-seo";
 import { useState } from "react";
 import { Prisma } from "@prisma/client";
 import { fetcher } from "../utils/fetcher";
-import prisma from "../lib/prisma";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { format } from 'date-fns';
 import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
+import { PaginationProps } from "semantic-ui-react/dist/commonjs/addons/Pagination/Pagination";
 
 export async function getServerSideProps({ query: { page = "1", orderBy = "title", sort = "asc", priority = "all" } }) {
   const {tasks, count} = await fetcher(`/api/task/read?page=${page}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null);
@@ -44,19 +41,10 @@ export default function Tasks(props: any) {
     orderBy: props.orderBy
   });
 
-
-  const [currentDate, setNewDate] = useState(null);
   const [pageCount, setPageCount] = useState(Math.ceil(props.taskCount / 4));
 
 
-
-
   useEffect(() => {
-    console.log("currentPage = " + currentPage);
-    console.log("sort = " + order.sort);
-    console.log("orderBy = " + order.orderBy);
-    console.log("priority = " + priority);
-
     router.query.page = currentPage;
     router.query.sort = order.sort;
     router.query.orderBy = order.orderBy;
@@ -68,8 +56,8 @@ export default function Tasks(props: any) {
       setTasks(tasks);
       setPageCount(Math.ceil(count / 4));
     };
-
-    fetchData();    
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, order, priority]);
 
   const pagginationHandler = (activePage: number) => {
@@ -91,7 +79,7 @@ export default function Tasks(props: any) {
     { text: "High", value: "3" },
   ];
 
-  const filterResults = async (newPriority: any) => {
+  const filterResults = async (newPriority: string) => {
     setPriority(newPriority);
     setCurrentPage(1);
   }
@@ -108,7 +96,7 @@ export default function Tasks(props: any) {
           value={priority}
           options={priorityOptions}
           onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
-            filterResults(data.value);
+            filterResults(data.value as string);
           }}
         />
       </Form>
@@ -124,7 +112,7 @@ export default function Tasks(props: any) {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
-              sorted={order.orderBy === "title" ? (order.sort === "asc" ? "ascending" : "descending") : false}
+              sorted={order.orderBy === "title" ? (order.sort === "asc" ? "ascending" : "descending") : undefined}
               onClick={() => sorting("title")}
             >
               Title
@@ -133,7 +121,7 @@ export default function Tasks(props: any) {
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Priority</Table.HeaderCell>
             <Table.HeaderCell
-              sorted={order.orderBy === "createAt" ? (order.sort === "asc" ? "ascending" : "descending") : false}
+              sorted={order.orderBy === "createAt" ? (order.sort === "asc" ? "ascending" : "descending") : undefined}
               onClick={() => sorting("createAt")}
             >Created</Table.HeaderCell>
             <Table.HeaderCell collapsing>Action</Table.HeaderCell>
@@ -151,7 +139,7 @@ export default function Tasks(props: any) {
               <Table.Cell>{t.description}</Table.Cell>
               <Table.Cell>{t.status}</Table.Cell>
               <Table.Cell>{t.priority}</Table.Cell>
-              <Table.Cell>{ format(new Date(t.createAt), 'yyyy-MM-dd') }</Table.Cell>
+              <Table.Cell>{ format(new Date(t.createAt as string), 'yyyy-MM-dd') }</Table.Cell>
               <Table.Cell>
                 <Button
                   animated="fade"
@@ -180,7 +168,7 @@ export default function Tasks(props: any) {
         siblingRange={1}
         totalPages={pageCount}
         activePage={currentPage}
-        onPageChange={(event, data) => pagginationHandler(data.activePage)}
+        onPageChange={(event: React.MouseEvent<HTMLAnchorElement>, data: PaginationProps) => pagginationHandler(data.activePage as number)}
       />
     </Container>
   );
