@@ -4,6 +4,7 @@ import { Container } from "semantic-ui-react";
 
 export default function CreateTask() {
     const task = {
+        task_id: null,
         title: "",
         description: "",
         status: "Pending",

@@ -1,13 +1,14 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../lib/prisma";
 
-export default async (req, res) => {
+const deleteUser = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { user_id } = req.body;
     if (!user_id) {
       res.json({ error: "You should have an user_id!" });
       return;
     }
-    const user = await prisma.user.delete({
+    const user = await prisma?.user.delete({
       where: { user_id },
     });
     res.status(200).json(user);
@@ -15,3 +16,5 @@ export default async (req, res) => {
     res.status(400).json({ message: "Something went wrong!" });
   }
 };
+
+export default deleteUser;

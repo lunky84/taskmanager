@@ -17,7 +17,7 @@ import prisma from "../lib/prisma";
 import { fetcher } from "../utils/fetcher";
 
 export async function getServerSideProps() {
-  const users: Prisma.UserUncheckedCreateInput[] = await prisma.user.findMany();
+  const users: any = await prisma?.user.findMany();
   return {
     props: { initialUsers: users },
   };
@@ -125,11 +125,11 @@ export default function Home({ initialUsers }) {
         <Form
           onSubmit={async () => {
             const body: Prisma.UserCreateInput = {
-              firstName,
-              lastName,
+              first_name: firstName,
+              last_name: lastName,
               role,
               email,
-              avatar,
+              avatar
             };
 
             await fetcher("/api/createUser", { user: body });
@@ -198,7 +198,7 @@ export default function Home({ initialUsers }) {
               <Table.Row key={index}>
                 <Table.Cell>
                   <Header as="h4" image>
-                    <Image src={u.avatar} rounded size="mini"></Image>
+                    <Image src={u.avatar} rounded size="mini" alt=""></Image>
                     <Header.Content>
                       {u.first_name + " " + u.last_name}
                       <Header.Subheader>{capitalize(u.role)}</Header.Subheader>

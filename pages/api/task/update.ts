@@ -10,7 +10,7 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const { task, id } = req.body;
-    const updatedTask = await prisma.task.update({
+    const updatedTask = await prisma?.task.update({
       where: {
         task_id: id,
       },

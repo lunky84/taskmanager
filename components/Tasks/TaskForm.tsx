@@ -11,12 +11,12 @@ import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/
 
 interface props{
   task: {
-    task_id: number
+    task_id: number | null
     title: string,
     description: string,
     status: string,
     priority: number,
-    date_due: Date
+    date_due: Date | null
   }
 }
 
