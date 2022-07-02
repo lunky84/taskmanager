@@ -19,59 +19,67 @@ import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/
 
 import { fetcher } from "../utils/fetcher";
 
-export async function getServerSideProps({ query: { page = "1", orderBy = "title", sort = "asc", priority = "all" } }) {
-  const {tasks, count} = await fetcher(`/api/task/read?page=${page}&orderBy=${orderBy}&sort=${sort}&priority=${priority}`, null);
+export async function getServerSideProps({ query: { page = "1", order = "title", sort = "asc", priority = "all", status = "all" } }) {
+  const {tasks, count} = await fetcher(`/api/task/read?page=${page}&order=${order}&sort=${sort}&priority=${priority}`, null);
   return {
     props: {
       initialTasks: tasks,
       taskCount: count,
-      currentPage: page,
-      orderBy: orderBy,
-      sortDirection: sort,
+      config: {
+        page: page,
+        order: order,
+        sort: sort,
+        priority: priority,
+        status: status
+      }
     },
   };
 }
 
 export default function Tasks(props: any) {
+
+  const [firstLoad, setFirstLoad] = useState(true);
+
   const router = useRouter();
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
-  const [status, setStatus] = useState("Pending");
-  const [priority, setPriority] = useState("all");
-  const [currentPage, setCurrentPage] = useState(props.currentPage);
-  const [order, setOrder] = useState({
-    sort: props.sortDirection,
-    orderBy: props.orderBy
-  });
-
+  const [config, setConfig] = useState(props.config);
   const [pageCount, setPageCount] = useState(Math.ceil(props.taskCount / 4));
 
 
   useEffect(() => {
-    router.query.page = currentPage;
-    router.query.sort = order.sort;
-    router.query.orderBy = order.orderBy;
-    router.query.priority = priority;
+
+    if (firstLoad) {
+      setFirstLoad(false);
+      return;
+    } 
+
+    router.query.page = config.page;
+    router.query.sort = config.sort;
+    router.query.order = config.order;
+    router.query.priority = config.priority;
+    
     router.push(router);
 
     const fetchData = async () => {
-      const {tasks, count} = await fetcher(`/api/task/read?page=${currentPage}&orderBy=${order.orderBy}&sort=${order.sort}&priority=${priority}`, null);
+      const {tasks, count} = await fetcher(`/api/task/read?page=${config.page}&order=${config.order}&sort=${config.sort}&priority=${config.priority}&status=${config.status}`, null);
       setTasks(tasks);
       setPageCount(Math.ceil(count / 4));
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, order, priority]);
+  }, [config]);
 
   const pagginationHandler = (activePage: number) => {
-    setCurrentPage(activePage);
+    setConfig({...config, page: activePage})
   };
 
   const sorting = async (col: string) => {
-    const updatedSort = order.sort === "desc" ? "asc" : "desc";
-    setOrder({
+    const updatedSort = config.sort === "desc" ? "asc" : "desc";
+    setConfig({
+      ...config,
       sort: updatedSort,
-      orderBy: col
-    });
+      order: col
+    })
   };
 
   const priorityOptions = [
@@ -81,9 +89,19 @@ export default function Tasks(props: any) {
     { text: "High", value: "3" },
   ];
 
-  const filterResults = async (newPriority: string) => {
-    setPriority(newPriority);
-    setCurrentPage(1);
+  const statusOptions = [
+    { text: "All", value: "all" },
+    { text: "Pending", value: "Pending" },
+    { text: "Active", value: "Active" },
+    { text: "Completed", value: "Completed" },
+  ];
+
+  const filterResults = async (filter: string, value: string) => {
+    setConfig({
+      ...config,
+      [filter]: value,
+      page: 1
+    });
   }
 
   return (
@@ -95,10 +113,18 @@ export default function Tasks(props: any) {
       <Form>
         <Form.Select
           label="Priority"
-          value={priority}
+          value={config.priority}
           options={priorityOptions}
           onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
-            filterResults(data.value as string);
+            filterResults("priority", data.value as string);
+          }}
+        />
+        <Form.Select
+          label="Status"
+          value={config.status}
+          options={statusOptions}
+          onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+            filterResults("status", data.value as string);
           }}
         />
       </Form>
@@ -114,7 +140,7 @@ export default function Tasks(props: any) {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
-              sorted={order.orderBy === "title" ? (order.sort === "asc" ? "ascending" : "descending") : undefined}
+              sorted={config.order === "title" ? (config.sort === "asc" ? "ascending" : "descending") : undefined}
               onClick={() => sorting("title")}
             >
               Title
@@ -123,7 +149,7 @@ export default function Tasks(props: any) {
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Priority</Table.HeaderCell>
             <Table.HeaderCell
-              sorted={order.orderBy === "createAt" ? (order.sort === "asc" ? "ascending" : "descending") : undefined}
+              sorted={config.order === "createAt" ? (config.sort === "asc" ? "ascending" : "descending") : undefined}
               onClick={() => sorting("createAt")}
             >Created</Table.HeaderCell>
             <Table.HeaderCell collapsing>Action</Table.HeaderCell>
@@ -169,7 +195,7 @@ export default function Tasks(props: any) {
         lastItem={null}
         siblingRange={1}
         totalPages={pageCount}
-        activePage={currentPage}
+        activePage={config.page}
         onPageChange={(event: React.MouseEvent<HTMLAnchorElement>, data: PaginationProps) => pagginationHandler(data.activePage as number)}
       />
     </Container>

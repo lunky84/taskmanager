@@ -7,9 +7,10 @@ const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     task_id = null,
     page = 1,
-    orderBy = "title",
+    order = "title",
     sort = "asc",
     priority = "all",
+    status = "all",
   } = query;
   try {
     if (task_id != null) {
@@ -20,25 +21,32 @@ const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       res.status(200).json(task);
     } else {
-      const searchOptions = {
+      const searchOptions: any = {
         skip: (parseInt(page as string, 10) - 1) * 4,
         take: 4,
         orderBy: [
           {
-            [orderBy as string]: sort,
+            [order as string]: sort,
           },
         ],
         where: {},
       };
-      const countOptions = { where: {} };
+      const countOptions: any = { where: {} };
       if (priority !== "all") {
-        const whereClause = {
-          priority: {
-            equals: parseInt(priority as string, 10),
-          },
+        searchOptions.where.priority = {
+          equals: parseInt(priority as string, 10),
         };
-        searchOptions.where = whereClause;
-        countOptions.where = whereClause;
+        countOptions.where.priority = {
+          equals: parseInt(priority as string, 10),
+        };
+      }
+      if (status !== "all") {
+        searchOptions.where.status = {
+          equals: status,
+        };
+        countOptions.where.status = {
+          equals: status,
+        };
       }
 
       const [tasks, count]: any = await prisma?.$transaction([
