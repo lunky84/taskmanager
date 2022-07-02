@@ -1,11 +1,12 @@
+import { FC } from "react";
 import TaskForm from "@/components/Tasks/TaskForm";
 import { format } from 'date-fns';
 import { NextSeo } from "next-seo";
 import { Container } from "semantic-ui-react";
 import { fetcher } from "../../utils/fetcher";
 
-export async function getServerSideProps({ query: { task_id } }) {
-  const task = await fetcher(`/api/task/read?task_id=${task_id}`, null);
+export const getServerSideProps = async (context: any) => {
+  const task = await fetcher(`/api/task/read?task_id=${context.query.task_id}`, null);
   return {
     props: {
       task: task
@@ -13,7 +14,20 @@ export async function getServerSideProps({ query: { task_id } }) {
   };
 }
 
-export default function Task(props) {
+interface props{
+  task: {
+    task_id: number
+    title: string,
+    description: string,
+    status: string,
+    priority: number,
+    date_due: Date,
+    createAt: Date,
+    updatedAt: Date
+  }
+}
+
+const TaskPage:FC<props> = (props) => {
 
   return (
     <>
@@ -31,3 +45,5 @@ export default function Task(props) {
     </>
   );
 }
+
+export default TaskPage;

@@ -10,7 +10,7 @@ const createTask = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const { task } = req.body;
-    const savedTask = await prisma.task.create({
+    const savedTask = await prisma?.task.create({
       data: task,
     });
     res.status(200).json(savedTask);
