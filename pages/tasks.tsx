@@ -19,8 +19,8 @@ import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/
 
 import { fetcher } from "../utils/fetcher";
 
-export async function getServerSideProps({ query: { page = "1", order = "title", sort = "asc", priority = "all", status = "all" } }) {
-  const {tasks, count} = await fetcher(`/api/task/read?page=${page}&order=${order}&sort=${sort}&priority=${priority}`, null);
+export async function getServerSideProps({ query: { page = "1", order = "title", sort = "asc", priority = "all", status = "all", search = "" } }) {
+  const {tasks, count} = await fetcher(`/api/task/read?page=${page}&order=${order}&sort=${sort}&priority=${priority}&search=${search}`, null);
   return {
     props: {
       initialTasks: tasks,
@@ -30,7 +30,8 @@ export async function getServerSideProps({ query: { page = "1", order = "title",
         order: order,
         sort: sort,
         priority: priority,
-        status: status
+        status: status,
+        search: search
       }
     },
   };
@@ -44,6 +45,7 @@ export default function Tasks(props: any) {
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
   const [config, setConfig] = useState(props.config);
   const [pageCount, setPageCount] = useState(Math.ceil(props.taskCount / 4));
+  const [search, setSearch] = useState(props.config.search);
 
 
   useEffect(() => {
@@ -57,11 +59,12 @@ export default function Tasks(props: any) {
     router.query.sort = config.sort;
     router.query.order = config.order;
     router.query.priority = config.priority;
+    router.query.search = config.search;
     
     router.push(router);
 
     const fetchData = async () => {
-      const {tasks, count} = await fetcher(`/api/task/read?page=${config.page}&order=${config.order}&sort=${config.sort}&priority=${config.priority}&status=${config.status}`, null);
+      const {tasks, count} = await fetcher(`/api/task/read?page=${config.page}&order=${config.order}&sort=${config.sort}&priority=${config.priority}&status=${config.status}&search=${config.search}`, null);
       setTasks(tasks);
       setPageCount(Math.ceil(count / 4));
     };
@@ -110,31 +113,49 @@ export default function Tasks(props: any) {
 
       <h1>Tasks</h1>
 
-      <Form>
-        <Form.Select
-          label="Priority"
-          value={config.priority}
-          options={priorityOptions}
-          onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
-            filterResults("priority", data.value as string);
-          }}
-        />
-        <Form.Select
-          label="Status"
-          value={config.status}
-          options={statusOptions}
-          onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
-            filterResults("status", data.value as string);
-          }}
-        />
+      <Form onSubmit={async () => {
+        setConfig({
+          ...config,
+          order: "title",
+          sort: "asc",
+          priority: "all",
+          status: "all",
+          search: search,
+          page: 1
+        });
+      }}
+    >
+        <Form.Group widths='equal'>
+          <Form.Input
+            action={{
+              color: 'primary',
+              icon: 'search',
+            }}
+            label="Search"
+            placeholder="Enter a task ID"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Form.Select
+            label="Priority"
+            value={config.priority}
+            options={priorityOptions}
+            onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+              filterResults("priority", data.value as string);
+            }}
+          />
+          <Form.Select
+            label="Status"
+            value={config.status}
+            options={statusOptions}
+            onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+              filterResults("status", data.value as string);
+            }}
+          />
+        </Form.Group>
       </Form>
 
       <br />
-
-
-      <Link href="/create-task" passHref>
-        <Button>Create Task</Button>
-      </Link>
       
       <Table sortable celled>
         <Table.Header>

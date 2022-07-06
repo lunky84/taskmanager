@@ -11,6 +11,7 @@ const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
     sort = "asc",
     priority = "all",
     status = "all",
+    search = "",
   } = query;
   try {
     if (task_id != null) {
@@ -46,6 +47,15 @@ const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
         };
         countOptions.where.status = {
           equals: status,
+        };
+      }
+
+      if (search !== "") {
+        searchOptions.where.task_id = {
+          search: search,
+        };
+        countOptions.where.task_id = {
+          search: search,
         };
       }
 

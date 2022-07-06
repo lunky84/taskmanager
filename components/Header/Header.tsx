@@ -17,6 +17,11 @@ const Header = () => {
           <a>Tasks</a>
         </Link>
       </Menu.Item>
+      <Menu.Item active={router.pathname == "/create-task"}>
+        <Link href="/create-task">
+          <a>Create task</a>
+        </Link>
+      </Menu.Item>
     </Menu>
   );
 };
