@@ -11,7 +11,7 @@ import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/
 
 interface props{
   task: {
-    task_id: number | null
+    task_id: string | null
     title: string,
     description: string,
     status: string,
@@ -53,7 +53,7 @@ const TaskForm:FC<props> = (props) => {
           priority,
           date_due: dateDue
         };
-        if (props.task.task_id === undefined) {
+        if (props.task.task_id === null) {
           await fetcher("/api/task/create", { task: body });
         } else {
           await fetcher("/api/task/update", {

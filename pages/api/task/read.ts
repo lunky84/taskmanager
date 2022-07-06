@@ -16,7 +16,7 @@ const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
     if (task_id != null) {
       const task = await prisma?.task.findUnique({
         where: {
-          task_id: parseInt(task_id as string),
+          task_id: task_id as string,
         },
       });
       res.status(200).json(task);

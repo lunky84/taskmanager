@@ -16,7 +16,7 @@ export const getServerSideProps = async (context: any) => {
 
 interface props{
   task: {
-    task_id: number
+    task_id: string
     title: string,
     description: string,
     status: string,
