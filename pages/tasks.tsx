@@ -149,8 +149,8 @@ export default function Tasks(props: any) {
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Priority</Table.HeaderCell>
             <Table.HeaderCell
-              sorted={config.order === "createAt" ? (config.sort === "asc" ? "ascending" : "descending") : undefined}
-              onClick={() => sorting("createAt")}
+              sorted={config.order === "createdAt" ? (config.sort === "asc" ? "ascending" : "descending") : undefined}
+              onClick={() => sorting("createdAt")}
             >Created</Table.HeaderCell>
             <Table.HeaderCell collapsing>Action</Table.HeaderCell>
           </Table.Row>
@@ -167,7 +167,7 @@ export default function Tasks(props: any) {
               <Table.Cell>{t.description}</Table.Cell>
               <Table.Cell>{t.status}</Table.Cell>
               <Table.Cell>{t.priority}</Table.Cell>
-              <Table.Cell>{ format(new Date(t.createAt as string), 'yyyy-MM-dd') }</Table.Cell>
+              <Table.Cell>{ format(new Date(t.createdAt as string), 'yyyy-MM-dd') }</Table.Cell>
               <Table.Cell>
                 <Button
                   animated="fade"

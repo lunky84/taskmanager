@@ -22,7 +22,7 @@ interface props{
     status: string,
     priority: number,
     date_due: Date,
-    createAt: Date,
+    createdAt: Date,
     updatedAt: Date
   }
 }
@@ -36,7 +36,7 @@ const TaskPage:FC<props> = (props) => {
 
         <h1>{props.task.title}</h1>
         <p><strong>ID:</strong> {props.task.task_id}</p>
-        <p><strong>Created:</strong> { format(new Date(props.task.createAt), 'yyyy-MM-dd hh:mm') }</p>
+        <p><strong>Created:</strong> { format(new Date(props.task.createdAt), 'yyyy-MM-dd hh:mm') }</p>
         <p><strong>Modified:</strong> { format(new Date(props.task.updatedAt), 'yyyy-MM-dd hh:mm') }</p>
 
         <TaskForm task={props.task}></TaskForm>
