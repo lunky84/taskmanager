@@ -111,7 +111,7 @@ export default function Tasks(props: any) {
   }
 
   const resetForm = async () => {
-    console.log("form reset");
+    setSearch("");
     setConfig({
       ...config,
       page: 1,
