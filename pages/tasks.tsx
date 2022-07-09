@@ -13,6 +13,7 @@ import {
   Icon,
   Pagination,
   Table,
+  Grid
 } from "semantic-ui-react";
 import { PaginationProps } from "semantic-ui-react/dist/commonjs/addons/Pagination/Pagination";
 import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
@@ -159,26 +160,31 @@ export default function Tasks(props: any) {
 
       <br />
 
-      <Form>
-        <Form.Select
-          label="Results per page"
-          value={config.perPage}
-          options={[
-            { text: "1", value: "1" },
-            { text: "2", value: "2" },
-            { text: "3", value: "3" },
-            { text: "4", value: "4" }
-          ]}
-          onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
-            setConfig({
-              ...config,
-              perPage: data.value,
-              page: 1
-            })
-          }}
-        />
-      </Form>
-      
+      <Grid>
+        <Grid.Column width={12}></Grid.Column>
+        <Grid.Column width={4}>
+          <Form>
+            <Form.Select
+              label="Results per page"
+              value={config.perPage}
+              options={[
+                { text: "1", value: "1" },
+                { text: "2", value: "2" },
+                { text: "3", value: "3" },
+                { text: "4", value: "4" }
+              ]}
+              onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+                setConfig({
+                  ...config,
+                  perPage: data.value,
+                  page: 1
+                })
+              }}
+            />
+          </Form>
+        </Grid.Column>
+      </Grid>
+
       <Table sortable celled>
         <Table.Header>
           <Table.Row>
