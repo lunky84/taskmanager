@@ -145,7 +145,7 @@ export default function Tasks(props: any) {
           <Form.Group widths='equal'>
             <Form.Input
               action={{
-                color: 'primary',
+                color: 'blue',
                 icon: 'search',
               }}
               label="Search"

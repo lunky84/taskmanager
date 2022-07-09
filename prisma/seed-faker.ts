@@ -29,13 +29,22 @@ interface Task {
   createdAt: Date;
 }
 
+const statuses = ["Pending", "Active", "Complete"];
+
+const randomStatus = () => {
+  return faker.datatype.number({
+    min: 0,
+    max: statuses.length - 1,
+  });
+};
+
 const tasks: Task[] = [];
 
 function createRandomTask(): Task {
   return {
     title: faker.lorem.words(10),
     description: faker.lorem.paragraph(3),
-    status: "Pending",
+    status: statuses[randomStatus()],
     priority: faker.datatype.number({
       min: 1,
       max: 3,
