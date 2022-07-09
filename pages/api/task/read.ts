@@ -12,6 +12,7 @@ const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
     priority = "all",
     status = "all",
     search = "",
+    perPage = "4",
   } = query;
   try {
     if (task_id != null) {
@@ -23,8 +24,9 @@ const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).json(task);
     } else {
       const searchOptions: any = {
-        skip: (parseInt(page as string, 10) - 1) * 4,
-        take: 4,
+        skip:
+          (parseInt(page as string, 10) - 1) * parseInt(perPage as string, 10),
+        take: parseInt(perPage as string, 10),
         orderBy: [
           {
             [order as string]: sort,

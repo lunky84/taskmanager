@@ -19,8 +19,8 @@ import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/
 
 import { fetcher } from "../utils/fetcher";
 
-export async function getServerSideProps({ query: { page = "1", order = "title", sort = "asc", priority = "all", status = "all", search = "" } }) {
-  const {tasks, count} = await fetcher(`/api/task/read?page=${page}&order=${order}&sort=${sort}&priority=${priority}&search=${search}`, null);
+export async function getServerSideProps({ query: { page = "1", order = "title", sort = "asc", priority = "all", status = "all", search = "", perPage = "4" } }) {
+  const {tasks, count} = await fetcher(`/api/task/read?page=${page}&order=${order}&sort=${sort}&priority=${priority}&search=${search}&perPage=${perPage}`, null);
   return {
     props: {
       initialTasks: tasks,
@@ -31,7 +31,8 @@ export async function getServerSideProps({ query: { page = "1", order = "title",
         sort: sort,
         priority: priority,
         status: status,
-        search: search
+        search: search,
+        perPage: perPage
       }
     },
   };
@@ -44,7 +45,7 @@ export default function Tasks(props: any) {
   const router = useRouter();
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
   const [config, setConfig] = useState(props.config);
-  const [pageCount, setPageCount] = useState(Math.ceil(props.taskCount / 4));
+  const [pageCount, setPageCount] = useState(Math.ceil(props.taskCount / parseInt(props.config.perPage, 10)));
   const [search, setSearch] = useState(props.config.search);
 
 
@@ -60,13 +61,14 @@ export default function Tasks(props: any) {
     router.query.order = config.order;
     router.query.priority = config.priority;
     router.query.search = config.search;
+    router.query.perPage = config.perPage;
     
     router.push(router);
 
     const fetchData = async () => {
-      const {tasks, count} = await fetcher(`/api/task/read?page=${config.page}&order=${config.order}&sort=${config.sort}&priority=${config.priority}&status=${config.status}&search=${config.search}`, null);
+      const {tasks, count} = await fetcher(`/api/task/read?page=${config.page}&order=${config.order}&sort=${config.sort}&priority=${config.priority}&status=${config.status}&search=${config.search}&perPage=${config.perPage}`, null);
       setTasks(tasks);
-      setPageCount(Math.ceil(count / 4));
+      setPageCount(Math.ceil(count / config.perPage));
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -156,6 +158,26 @@ export default function Tasks(props: any) {
       </Form>
 
       <br />
+
+      <Form>
+        <Form.Select
+          label="Results per page"
+          value={config.perPage}
+          options={[
+            { text: "1", value: "1" },
+            { text: "2", value: "2" },
+            { text: "3", value: "3" },
+            { text: "4", value: "4" }
+          ]}
+          onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+            setConfig({
+              ...config,
+              perPage: data.value,
+              page: 1
+            })
+          }}
+        />
+      </Form>
       
       <Table sortable celled>
         <Table.Header>
