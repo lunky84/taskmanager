@@ -135,7 +135,7 @@ export default function Tasks(props: any) {
               icon: 'search',
             }}
             label="Search"
-            placeholder="Enter a task ID"
+            placeholder="Enter a task ID or title"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />

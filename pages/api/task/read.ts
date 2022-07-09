@@ -1,5 +1,4 @@
 import prisma from "../../../lib/prisma";
-import { Prisma } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -53,12 +52,23 @@ const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       if (search !== "") {
-        searchOptions.where.task_id = {
-          search: search,
+        const searchConditions = {
+          OR: [
+            {
+              task_id: {
+                equals: search,
+              },
+            },
+            {
+              title: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          ],
         };
-        countOptions.where.task_id = {
-          search: search,
-        };
+        searchOptions.where = searchConditions;
+        countOptions.where = searchConditions;
       }
 
       const [tasks, count]: any = await prisma?.$transaction([
