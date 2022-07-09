@@ -20,7 +20,7 @@ import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/
 
 import { fetcher } from "../utils/fetcher";
 
-export async function getServerSideProps({ query: { page = "1", order = "title", sort = "asc", priority = "all", status = "all", search = "", perPage = "4" } }) {
+export async function getServerSideProps({ query: { page = "1", order = "title", sort = "asc", priority = "all", status = "all", search = "", perPage = "10" } }) {
   const {tasks, count} = await fetcher(`/api/task/read?page=${page}&order=${order}&sort=${sort}&priority=${priority}&search=${search}&perPage=${perPage}`, null);
   return {
     props: {
@@ -168,10 +168,11 @@ export default function Tasks(props: any) {
               label="Results per page"
               value={config.perPage}
               options={[
-                { text: "1", value: "1" },
-                { text: "2", value: "2" },
-                { text: "3", value: "3" },
-                { text: "4", value: "4" }
+                { text: "5", value: "5" },
+                { text: "10", value: "10" },
+                { text: "25", value: "25" },
+                { text: "50", value: "50" },
+                { text: "100", value: "100" }
               ]}
               onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
                 setConfig({

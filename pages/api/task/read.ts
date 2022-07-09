@@ -11,7 +11,7 @@ const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
     priority = "all",
     status = "all",
     search = "",
-    perPage = "4",
+    perPage = "10",
   } = query;
   try {
     if (task_id != null) {
