@@ -26,6 +26,7 @@ interface Task {
   description: string;
   status: string;
   priority: number;
+  createdAt: Date;
 }
 
 const tasks: Task[] = [];
@@ -39,10 +40,11 @@ function createRandomTask(): Task {
       min: 1,
       max: 3,
     }),
+    createdAt: faker.date.past(),
   };
 }
 
-Array.from({ length: 1000 }).forEach(() => {
+Array.from({ length: 100 }).forEach(() => {
   tasks.push(createRandomTask());
 });
 
