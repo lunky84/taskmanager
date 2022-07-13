@@ -44,6 +44,7 @@ export default function Tasks(props: any) {
   const [firstLoad, setFirstLoad] = useState(true);
 
   const router = useRouter();
+  const [count, setCount] = useState(props.taskCount);
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
   const [config, setConfig] = useState(props.config);
   const [pageCount, setPageCount] = useState(Math.ceil(props.taskCount / parseInt(props.config.perPage, 10)));
@@ -69,6 +70,7 @@ export default function Tasks(props: any) {
     const fetchData = async () => {
       const {tasks, count} = await fetcher(`/api/task/read?page=${config.page}&order=${config.order}&sort=${config.sort}&priority=${config.priority}&status=${config.status}&search=${config.search}&perPage=${config.perPage}`, null);
       setTasks(tasks);
+      setCount(count);
       setPageCount(Math.ceil(count / config.perPage));
     };
     fetchData();
@@ -182,7 +184,9 @@ export default function Tasks(props: any) {
       <Container style={{ margin: 20 }}>
 
         <Grid columns={2} stackable>
-          <Grid.Column width={12}></Grid.Column>
+          <Grid.Column width={12}>
+            <div><strong>Count:</strong> {count}</div>
+          </Grid.Column>
           <Grid.Column width={4}>
             <Form>
               <Form.Select
@@ -245,7 +249,8 @@ export default function Tasks(props: any) {
                     color="red"
                     onClick={async () => {
                       await fetcher("/api/task/delete", { task_id: t.task_id });
-                      await setTasks(tasks.filter((task) => task !== t));
+                      setTasks(tasks.filter((task) => task !== t));
+                      setCount(count - 1)
                     }}
                   >
                     <Button.Content visible>Delete</Button.Content>
