@@ -4,15 +4,9 @@ import { useState } from "react";
 import { Prisma } from "@prisma/client";
 import { NextSeo } from "next-seo";
 import TaskList from "@/components/Tasks/TaskList";
+import TaskSearchForm from "@/components/Tasks/TaskSearchForm";
 import { useRouter } from "next/router";
-import {
-  Button,
-  Container,
-  Form,
-  Icon,
-  Pagination,
-  Grid,
-} from "semantic-ui-react";
+import { Container, Form, Pagination, Grid } from "semantic-ui-react";
 import { PaginationProps } from "semantic-ui-react/dist/commonjs/addons/Pagination/Pagination";
 import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
 
@@ -62,7 +56,6 @@ export default function Tasks(props: any) {
   const [pageCount, setPageCount] = useState(
     Math.ceil(props.taskCount / parseInt(props.config.perPage, 10))
   );
-  const [search, setSearch] = useState(props.config.search);
 
   useEffect(() => {
     if (firstLoad) {
@@ -105,27 +98,25 @@ export default function Tasks(props: any) {
     });
   };
 
+  const searchTasks = async (search) => {
+    setConfig({
+      ...config,
+      order: "title",
+      sort: "asc",
+      priority: "all",
+      status: "all",
+      search: search,
+      page: 1,
+    });
+  };
+
   const deleteTask = async (t: any) => {
     await fetcher("/api/task/delete", { task_id: t.task_id });
     setTasks(tasks.filter((task) => task !== t));
     setCount(count - 1);
   };
 
-  const priorityOptions = [
-    { text: "All", value: "all" },
-    { text: "Low", value: "1" },
-    { text: "Medium", value: "2" },
-    { text: "High", value: "3" },
-  ];
-
-  const statusOptions = [
-    { text: "All", value: "all" },
-    { text: "Pending", value: "Pending" },
-    { text: "Active", value: "Active" },
-    { text: "Completed", value: "Completed" },
-  ];
-
-  const filterResults = async (filter: string, value: string) => {
+  const filterTasks = async (filter: string, value: string) => {
     setConfig({
       ...config,
       [filter]: value,
@@ -134,7 +125,6 @@ export default function Tasks(props: any) {
   };
 
   const resetForm = async () => {
-    setSearch("");
     setConfig({
       ...config,
       page: 1,
@@ -153,59 +143,12 @@ export default function Tasks(props: any) {
 
         <h1>Tasks</h1>
 
-        <Form
-          onSubmit={async () => {
-            setConfig({
-              ...config,
-              order: "title",
-              sort: "asc",
-              priority: "all",
-              status: "all",
-              search: search,
-              page: 1,
-            });
-          }}
-        >
-          <Form.Group widths="equal">
-            <Form.Input
-              action={{
-                color: "blue",
-                icon: "search",
-              }}
-              label="Search"
-              placeholder="Enter a task ID or title"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <Form.Select
-              label="Priority"
-              value={config.priority}
-              options={priorityOptions}
-              onChange={(
-                e: React.SyntheticEvent<HTMLElement>,
-                data: DropdownProps
-              ) => {
-                filterResults("priority", data.value as string);
-              }}
-            />
-            <Form.Select
-              label="Status"
-              value={config.status}
-              options={statusOptions}
-              onChange={(
-                e: React.SyntheticEvent<HTMLElement>,
-                data: DropdownProps
-              ) => {
-                filterResults("status", data.value as string);
-              }}
-            />
-          </Form.Group>
-        </Form>
-
-        <Button basic icon labelPosition="left" onClick={resetForm}>
-          <Icon name="refresh" />
-          Reset
-        </Button>
+        <TaskSearchForm
+          searchTasks={searchTasks}
+          filterTasks={filterTasks}
+          resetForm={resetForm}
+          config={config}
+        ></TaskSearchForm>
       </Container>
 
       {tasks && tasks.length ? (
