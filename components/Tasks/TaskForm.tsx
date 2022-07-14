@@ -5,23 +5,22 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { Prisma } from "@prisma/client";
 import { fetcher } from "../../utils/fetcher";
-import SemanticDatepicker from 'react-semantic-ui-datepickers';
-import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
+import SemanticDatepicker from "react-semantic-ui-datepickers";
+import "react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css";
 import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
 
-interface props{
+interface props {
   task: {
-    task_id: string | null
-    title: string,
-    description: string,
-    status: string,
-    priority: number,
-    date_due: Date | null
-  }
+    task_id: string | null;
+    title: string;
+    description: string;
+    status: string;
+    priority: number;
+    date_due: Date | null;
+  };
 }
 
-
-const TaskForm:FC<props> = (props) => {
+const TaskForm: FC<props> = (props) => {
   const [title, setTitle] = useState(props.task.title);
   const [description, setDescription] = useState(props.task.description);
   const [status, setStatus] = useState<any | null>(props.task.status);
@@ -45,62 +44,69 @@ const TaskForm:FC<props> = (props) => {
   // const {form: Form} = props;
   return (
     <div>
-    <Form onSubmit={async () => {
-        const body: Prisma.TaskCreateInput = {
-          title,
-          description,
-          status,
-          priority,
-          date_due: dateDue
-        };
-        if (props.task.task_id === null) {
-          await fetcher("/api/task/create", { task: body });
-        } else {
-          await fetcher("/api/task/update", {
-            task: body,
-            id: props.task.task_id,
-          });
-        }
-        router.push("/tasks");
-      }}
-    >
+      <Form
+        onSubmit={async () => {
+          const body: Prisma.TaskCreateInput = {
+            title,
+            description,
+            status,
+            priority,
+            date_due: dateDue,
+          };
+          if (props.task.task_id === null) {
+            await fetcher("/api/task/create", { task: body });
+          } else {
+            await fetcher("/api/task/update", {
+              task: body,
+              id: props.task.task_id,
+            });
+          }
+          router.push("/tasks");
+        }}
+      >
+        <Form.Input
+          label="Title"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <Form.TextArea
+          label="Description"
+          placeholder="Tell us more"
+          style={{ minHeight: 100 }}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <SemanticDatepicker
+          label="Date due"
+          onChange={onChange}
+          value={dateDue === null ? null : new Date(dateDue)}
+        />
+        <Form.Select
+          label="Status"
+          value={status}
+          options={statusOptions}
+          onChange={(
+            e: React.SyntheticEvent<HTMLElement>,
+            data: DropdownProps
+          ) => setStatus(data.value)}
+        />
+        <Form.Select
+          label="Priority"
+          value={priority}
+          options={priorityOptions}
+          onChange={(e, data) => setPriority(data.value)}
+        />
 
-      <Form.Input
-        label="Title"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <Form.TextArea
-        label="Description"
-        placeholder="Tell us more"
-        style={{ minHeight: 100 }}
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <SemanticDatepicker label="Date due" onChange={onChange} value={dateDue === null ? null : new Date(dateDue)} />
-      <Form.Select
-        label="Status"
-        value={status}
-        options={statusOptions}
-        onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => setStatus(data.value)}
-      />
-      <Form.Select
-        label="Priority"
-        value={priority}
-        options={priorityOptions}
-        onChange={(e, data) => setPriority(data.value)}
-      />
-
-      <Button primary type="submit">
-        Save
-      </Button>
-      <Link href="/tasks" passHref>
-        <Button>Cancel</Button>
-      </Link>
-    </Form>
+        <Button primary type="submit">
+          Save
+        </Button>
+        <Link href="/tasks" passHref>
+          <Button>Cancel</Button>
+        </Link>
+      </Form>
     </div>
   );
-}
+};
 
 export default TaskForm;

@@ -2,9 +2,8 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 
 import { Prisma } from "@prisma/client";
-import { format } from 'date-fns';
 import { NextSeo } from "next-seo";
-import Link from "next/link";
+import TaskList from "@/components/Tasks/TaskList";
 import { useRouter } from "next/router";
 import {
   Button,
@@ -12,16 +11,28 @@ import {
   Form,
   Icon,
   Pagination,
-  Table,
-  Grid
+  Grid,
 } from "semantic-ui-react";
 import { PaginationProps } from "semantic-ui-react/dist/commonjs/addons/Pagination/Pagination";
 import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
 
 import { fetcher } from "../utils/fetcher";
 
-export async function getServerSideProps({ query: { page = "1", order = "title", sort = "asc", priority = "all", status = "all", search = "", perPage = "10" } }) {
-  const {tasks, count} = await fetcher(`/api/task/read?page=${page}&order=${order}&sort=${sort}&priority=${priority}&search=${search}&perPage=${perPage}`, null);
+export async function getServerSideProps({
+  query: {
+    page = "1",
+    order = "title",
+    sort = "asc",
+    priority = "all",
+    status = "all",
+    search = "",
+    perPage = "10",
+  },
+}) {
+  const { tasks, count } = await fetcher(
+    `/api/task/read?page=${page}&order=${order}&sort=${sort}&priority=${priority}&search=${search}&perPage=${perPage}`,
+    null
+  );
   return {
     props: {
       initialTasks: tasks,
@@ -33,30 +44,31 @@ export async function getServerSideProps({ query: { page = "1", order = "title",
         priority: priority,
         status: status,
         search: search,
-        perPage: perPage
-      }
+        perPage: perPage,
+      },
     },
   };
 }
 
 export default function Tasks(props: any) {
-
   const [firstLoad, setFirstLoad] = useState(true);
 
   const router = useRouter();
   const [count, setCount] = useState(props.taskCount);
-  const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(props.initialTasks);
+  const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(
+    props.initialTasks
+  );
   const [config, setConfig] = useState(props.config);
-  const [pageCount, setPageCount] = useState(Math.ceil(props.taskCount / parseInt(props.config.perPage, 10)));
+  const [pageCount, setPageCount] = useState(
+    Math.ceil(props.taskCount / parseInt(props.config.perPage, 10))
+  );
   const [search, setSearch] = useState(props.config.search);
 
-
   useEffect(() => {
-
     if (firstLoad) {
       setFirstLoad(false);
       return;
-    } 
+    }
 
     router.query.page = config.page;
     router.query.sort = config.sort;
@@ -64,11 +76,14 @@ export default function Tasks(props: any) {
     router.query.priority = config.priority;
     router.query.search = config.search;
     router.query.perPage = config.perPage;
-    
+
     router.push(router);
 
     const fetchData = async () => {
-      const {tasks, count} = await fetcher(`/api/task/read?page=${config.page}&order=${config.order}&sort=${config.sort}&priority=${config.priority}&status=${config.status}&search=${config.search}&perPage=${config.perPage}`, null);
+      const { tasks, count } = await fetcher(
+        `/api/task/read?page=${config.page}&order=${config.order}&sort=${config.sort}&priority=${config.priority}&status=${config.status}&search=${config.search}&perPage=${config.perPage}`,
+        null
+      );
       setTasks(tasks);
       setCount(count);
       setPageCount(Math.ceil(count / config.perPage));
@@ -78,7 +93,7 @@ export default function Tasks(props: any) {
   }, [config]);
 
   const pagginationHandler = (activePage: number) => {
-    setConfig({...config, page: activePage})
+    setConfig({ ...config, page: activePage });
   };
 
   const sorting = async (col: string) => {
@@ -86,8 +101,14 @@ export default function Tasks(props: any) {
     setConfig({
       ...config,
       sort: updatedSort,
-      order: col
-    })
+      order: col,
+    });
+  };
+
+  const deleteTask = async (t: any) => {
+    await fetcher("/api/task/delete", { task_id: t.task_id });
+    setTasks(tasks.filter((task) => task !== t));
+    setCount(count - 1);
   };
 
   const priorityOptions = [
@@ -108,9 +129,9 @@ export default function Tasks(props: any) {
     setConfig({
       ...config,
       [filter]: value,
-      page: 1
+      page: 1,
     });
-  }
+  };
 
   const resetForm = async () => {
     setSearch("");
@@ -123,7 +144,7 @@ export default function Tasks(props: any) {
       status: "all",
       search: "",
     });
-  }
+  };
 
   return (
     <div>
@@ -132,23 +153,24 @@ export default function Tasks(props: any) {
 
         <h1>Tasks</h1>
 
-        <Form onSubmit={async () => {
-          setConfig({
-            ...config,
-            order: "title",
-            sort: "asc",
-            priority: "all",
-            status: "all",
-            search: search,
-            page: 1
-          });
-        }}
-      >
-          <Form.Group widths='equal'>
+        <Form
+          onSubmit={async () => {
+            setConfig({
+              ...config,
+              order: "title",
+              sort: "asc",
+              priority: "all",
+              status: "all",
+              search: search,
+              page: 1,
+            });
+          }}
+        >
+          <Form.Group widths="equal">
             <Form.Input
               action={{
-                color: 'blue',
-                icon: 'search',
+                color: "blue",
+                icon: "search",
               }}
               label="Search"
               placeholder="Enter a task ID or title"
@@ -159,7 +181,10 @@ export default function Tasks(props: any) {
               label="Priority"
               value={config.priority}
               options={priorityOptions}
-              onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+              onChange={(
+                e: React.SyntheticEvent<HTMLElement>,
+                data: DropdownProps
+              ) => {
                 filterResults("priority", data.value as string);
               }}
             />
@@ -167,27 +192,29 @@ export default function Tasks(props: any) {
               label="Status"
               value={config.status}
               options={statusOptions}
-              onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+              onChange={(
+                e: React.SyntheticEvent<HTMLElement>,
+                data: DropdownProps
+              ) => {
                 filterResults("status", data.value as string);
               }}
             />
           </Form.Group>
         </Form>
 
-        <Button basic icon labelPosition='left' onClick={resetForm}>
-          <Icon name='refresh' />
+        <Button basic icon labelPosition="left" onClick={resetForm}>
+          <Icon name="refresh" />
           Reset
         </Button>
-
       </Container>
 
-
-      {tasks && tasks.length? (
+      {tasks && tasks.length ? (
         <Container style={{ margin: 20 }}>
-
           <Grid columns={2} stackable>
             <Grid.Column width={12}>
-              <div><strong>Count:</strong> {count}</div>
+              <div>
+                <strong>Count:</strong> {count}
+              </div>
             </Grid.Column>
             <Grid.Column width={4}>
               <Form>
@@ -199,73 +226,29 @@ export default function Tasks(props: any) {
                     { text: "10", value: "10" },
                     { text: "25", value: "25" },
                     { text: "50", value: "50" },
-                    { text: "100", value: "100" }
+                    { text: "100", value: "100" },
                   ]}
-                  onChange={(e: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+                  onChange={(
+                    e: React.SyntheticEvent<HTMLElement>,
+                    data: DropdownProps
+                  ) => {
                     setConfig({
                       ...config,
                       perPage: data.value,
-                      page: 1
-                    })
+                      page: 1,
+                    });
                   }}
                 />
               </Form>
             </Grid.Column>
           </Grid>
 
-          
-          <Table sortable celled>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell
-                  sorted={config.order === "title" ? (config.sort === "asc" ? "ascending" : "descending") : undefined}
-                  onClick={() => sorting("title")}
-                >
-                  Title
-                </Table.HeaderCell>
-                <Table.HeaderCell>Description</Table.HeaderCell>
-                <Table.HeaderCell>Status</Table.HeaderCell>
-                <Table.HeaderCell>Priority</Table.HeaderCell>
-                <Table.HeaderCell
-                  sorted={config.order === "createdAt" ? (config.sort === "asc" ? "ascending" : "descending") : undefined}
-                  onClick={() => sorting("createdAt")}
-                >Created</Table.HeaderCell>
-                <Table.HeaderCell collapsing>Action</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-              {tasks.map((t, index) => (
-                <Table.Row key={index}>
-                  <Table.Cell>
-                    <Link href={`/task/${t.task_id}`}>
-                      <a>{t.title}</a>
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>{t.description}</Table.Cell>
-                  <Table.Cell>{t.status}</Table.Cell>
-                  <Table.Cell>{t.priority}</Table.Cell>
-                  <Table.Cell>{ format(new Date(t.createdAt as string), 'yyyy-MM-dd') }</Table.Cell>
-                  <Table.Cell>
-                    <Button
-                      animated="fade"
-                      color="red"
-                      onClick={async () => {
-                        await fetcher("/api/task/delete", { task_id: t.task_id });
-                        setTasks(tasks.filter((task) => task !== t));
-                        setCount(count - 1)
-                      }}
-                    >
-                      <Button.Content visible>Delete</Button.Content>
-                      <Button.Content hidden>
-                        <Icon name="delete" />
-                      </Button.Content>
-                    </Button>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
+          <TaskList
+            onClickSort={sorting}
+            onClickDelete={deleteTask}
+            config={config}
+            tasks={tasks}
+          ></TaskList>
 
           <Pagination
             boundaryRange={0}
@@ -275,10 +258,15 @@ export default function Tasks(props: any) {
             siblingRange={1}
             totalPages={pageCount}
             activePage={config.page}
-            onPageChange={(event: React.MouseEvent<HTMLAnchorElement>, data: PaginationProps) => pagginationHandler(data.activePage as number)}
+            onPageChange={(
+              event: React.MouseEvent<HTMLAnchorElement>,
+              data: PaginationProps
+            ) => pagginationHandler(data.activePage as number)}
           />
         </Container>
-      ): <Container>Sorry no results match your search criteria</Container>}
+      ) : (
+        <Container>Sorry no results match your search criteria</Container>
+      )}
     </div>
   );
 }
