@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 
+import { GetServerSideProps } from "next";
 import { Prisma } from "@prisma/client";
 import { NextSeo } from "next-seo";
 import TaskList from "@/components/Tasks/TaskList";
@@ -12,7 +13,7 @@ import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/
 
 import { fetcher } from "../utils/fetcher";
 
-export async function getServerSideProps({
+export const getServerSideProps: GetServerSideProps = async ({
   query: {
     page = "1",
     order = "title",
@@ -22,11 +23,12 @@ export async function getServerSideProps({
     search = "",
     perPage = "10",
   },
-}) {
+}) => {
   const { tasks, count } = await fetcher(
     `/api/task/read?page=${page}&order=${order}&sort=${sort}&priority=${priority}&search=${search}&perPage=${perPage}`,
     null
   );
+
   return {
     props: {
       initialTasks: tasks,
@@ -42,7 +44,7 @@ export async function getServerSideProps({
       },
     },
   };
-}
+};
 
 export default function Tasks(props: any) {
   const [firstLoad, setFirstLoad] = useState(true);
@@ -98,7 +100,7 @@ export default function Tasks(props: any) {
     });
   };
 
-  const searchTasks = async (search) => {
+  const searchTasks = async (search: String) => {
     setConfig({
       ...config,
       order: "title",

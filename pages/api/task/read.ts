@@ -79,7 +79,7 @@ const readTask = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).json({ tasks: tasks, count: count });
     }
   } catch (error) {
-    res.status(400).json({ message: "Something went wrong!" + task_id });
+    res.status(400).json({ tasks: null, count: 0 });
   }
 };
 

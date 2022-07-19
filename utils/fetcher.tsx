@@ -6,6 +6,10 @@ export const fetcher = (url, data) =>
       "Content-Type": "application/json",
     },
     body: data ? JSON.stringify(data) : null,
-  }).then((r) => {
-    return r.json();
-  });
+  })
+    .then((r) => {
+      return r.json();
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
