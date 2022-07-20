@@ -54,6 +54,7 @@ export default function Tasks(props: any) {
   const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(
     props.initialTasks
   );
+  const [searchTerm, setSearchTerm] = useState(props.config.search);
   const [config, setConfig] = useState(props.config);
   const [pageCount, setPageCount] = useState(
     Math.ceil(props.taskCount / parseInt(props.config.perPage, 10))
@@ -100,6 +101,10 @@ export default function Tasks(props: any) {
     });
   };
 
+  const updateSearchTerm = (search: String) => {
+    setSearchTerm(search);
+  };
+
   const searchTasks = async (search: String) => {
     setConfig({
       ...config,
@@ -127,6 +132,7 @@ export default function Tasks(props: any) {
   };
 
   const resetForm = async () => {
+    setSearchTerm("");
     setConfig({
       ...config,
       page: 1,
@@ -149,6 +155,8 @@ export default function Tasks(props: any) {
           searchTasks={searchTasks}
           filterTasks={filterTasks}
           resetForm={resetForm}
+          updateSearchTerm={updateSearchTerm}
+          searchTerm={searchTerm}
           config={config}
         ></TaskSearchForm>
       </Container>
