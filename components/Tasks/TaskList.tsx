@@ -8,6 +8,7 @@ const TaskList: FC<any> = ({ onClickSort, onClickDelete, config, tasks }) => {
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell
+            data-testid="sort-by-title"
             sorted={
               config.order === "title"
                 ? config.sort === "asc"
@@ -25,6 +26,7 @@ const TaskList: FC<any> = ({ onClickSort, onClickDelete, config, tasks }) => {
           <Table.HeaderCell>Status</Table.HeaderCell>
           <Table.HeaderCell>Priority</Table.HeaderCell>
           <Table.HeaderCell
+            data-testid="sort-by-createdAt"
             sorted={
               config.order === "createdAt"
                 ? config.sort === "asc"
