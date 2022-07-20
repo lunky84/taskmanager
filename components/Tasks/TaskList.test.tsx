@@ -20,9 +20,7 @@ describe("TaskList", () => {
     expect(sorting).toHaveBeenCalledTimes(1);
     expect(sorting).toBeCalledWith("title");
   });
-});
 
-describe("TaskList", () => {
   it("sort by createdAt calls function with correct argument", () => {
     const sorting = jest.fn();
     const app = render(
