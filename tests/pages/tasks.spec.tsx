@@ -1,6 +1,7 @@
 import Tasks, { getServerSideProps } from "../../pages/tasks";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
+import { faker } from "@faker-js/faker";
 
 describe("The tasks page", () => {
   const { tasks, count } = { tasks: [], count: 0 };
@@ -14,6 +15,38 @@ describe("The tasks page", () => {
         }),
     })
   );
+
+  const statuses = ["Pending", "Active", "Complete"];
+
+  const randomStatus = () => {
+    return faker.datatype.number({
+      min: 0,
+      max: statuses.length - 1,
+    });
+  };
+
+  const mockTask = (n = 1) => {
+    const tasks = [];
+
+    for (let i = 0; i < n; i++) {
+      tasks.push({
+        task_id: faker.datatype.uuid(),
+        title: faker.lorem.words(10),
+        description: faker.lorem.paragraph(3),
+        author_id: null,
+        status: statuses[randomStatus()],
+        priority: faker.datatype.number({
+          min: 1,
+          max: 3,
+        }),
+        date_due: null,
+        createdAt: faker.date.past(),
+        updatedAt: faker.date.past(),
+      });
+    }
+
+    return tasks;
+  };
 
   it("should call task read api and return prop defaults", async () => {
     const response = await getServerSideProps({
@@ -65,21 +98,7 @@ describe("The tasks page", () => {
 
   it("Should display results", async () => {
     const props = {
-      initialTasks: [
-        {
-          task_id: "1d0dd84f-03ba-43e7-9f49-f2ba3034b7a7",
-          title:
-            "alias aut officia consequatur culpa sit repudiandae quia sed at",
-          description:
-            "Libero debitis rerum ut dicta in voluptatem natus aut dolores. Sint cum molestiae quaerat est ipsam aperiam odio. Dolorem sed nemo quibusdam cum quo culpa. Fuga ea nulla rerum ut. Alias et exercitationem voluptas.",
-          author_id: null,
-          status: "Active",
-          priority: 2,
-          date_due: null,
-          createdAt: "2022-06-28T16:55:50.107Z",
-          updatedAt: "2022-07-14T19:56:59.610Z",
-        },
-      ],
+      initialTasks: mockTask(),
       taskCount: 1,
       config: {
         page: "1",
@@ -107,34 +126,7 @@ describe("The tasks page", () => {
 
   it("Should delete task", async () => {
     const props = {
-      initialTasks: [
-        {
-          task_id: "1d0dd84f-03ba-43e7-9f49-f2ba3034b7a7",
-          title:
-            "alias aut officia consequatur culpa sit repudiandae quia sed at",
-          description:
-            "Libero debitis rerum ut dicta in voluptatem natus aut dolores. Sint cum molestiae quaerat est ipsam aperiam odio. Dolorem sed nemo quibusdam cum quo culpa. Fuga ea nulla rerum ut. Alias et exercitationem voluptas.",
-          author_id: null,
-          status: "Active",
-          priority: 2,
-          date_due: null,
-          createdAt: "2022-06-28T16:55:50.107Z",
-          updatedAt: "2022-07-14T19:56:59.610Z",
-        },
-        {
-          task_id: "1d0dd84f-03ba-43e7-9f49-f2ba3034b7a7",
-          title:
-            "alias aut officia consequatur culpa sit repudiandae quia sed at",
-          description:
-            "Libero debitis rerum ut dicta in voluptatem natus aut dolores. Sint cum molestiae quaerat est ipsam aperiam odio. Dolorem sed nemo quibusdam cum quo culpa. Fuga ea nulla rerum ut. Alias et exercitationem voluptas.",
-          author_id: null,
-          status: "Active",
-          priority: 2,
-          date_due: null,
-          createdAt: "2022-06-28T16:55:50.107Z",
-          updatedAt: "2022-07-14T19:56:59.610Z",
-        },
-      ],
+      initialTasks: mockTask(2),
       taskCount: 2,
       config: {
         page: "1",
