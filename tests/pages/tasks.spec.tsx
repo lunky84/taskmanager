@@ -1,4 +1,5 @@
-import { getServerSideProps } from "../../pages/tasks";
+import Tasks, { getServerSideProps } from "../../pages/tasks";
+import { render, screen } from "@testing-library/react";
 
 describe("The tasks page", () => {
   const { tasks, count } = { tasks: [], count: 0 };
@@ -34,6 +35,29 @@ describe("The tasks page", () => {
           },
         },
       })
+    );
+  });
+
+  it("Should display message when no tasks", async () => {
+    const props = {
+      initialTasks: tasks,
+      taskCount: count,
+      config: {
+        page: "1",
+        order: "title",
+        sort: "asc",
+        priority: "all",
+        status: "all",
+        search: "",
+        perPage: "10",
+      },
+    };
+
+    render(<Tasks {...props} />);
+
+    expect(screen.getByTestId("no-results-message")).toBeInTheDocument();
+    expect(screen.getByTestId("no-results-message")).toHaveTextContent(
+      "Sorry no results match your search criteria"
     );
   });
 });

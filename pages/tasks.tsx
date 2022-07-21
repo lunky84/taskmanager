@@ -166,7 +166,8 @@ export default function Tasks(props: any) {
           <Grid columns={2} stackable>
             <Grid.Column width={12}>
               <div>
-                <strong>Count:</strong> {count}
+                <strong>Count:</strong>{" "}
+                <span data-testid="result-count">{count}</span>
               </div>
             </Grid.Column>
             <Grid.Column width={4}>
@@ -218,7 +219,9 @@ export default function Tasks(props: any) {
           />
         </Container>
       ) : (
-        <Container>Sorry no results match your search criteria</Container>
+        <Container data-testid="no-results-message">
+          Sorry no results match your search criteria
+        </Container>
       )}
     </div>
   );
