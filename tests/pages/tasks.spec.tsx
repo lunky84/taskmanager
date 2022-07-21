@@ -1,5 +1,6 @@
 import Tasks, { getServerSideProps } from "../../pages/tasks";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { act } from "react-dom/test-utils";
 
 describe("The tasks page", () => {
   const { tasks, count } = { tasks: [], count: 0 };
@@ -93,8 +94,6 @@ describe("The tasks page", () => {
 
     render(<Tasks {...props} />);
 
-    screen.debug();
-
     expect(screen.queryByTestId("no-results-message")).toBeNull();
 
     const resultCount = screen.getByTestId("result-count");
@@ -103,6 +102,70 @@ describe("The tasks page", () => {
 
     expect(screen.queryAllByRole("row")).toHaveLength(
       props.initialTasks.length + 1
+    );
+  });
+
+  it("Should delete task", async () => {
+    const props = {
+      initialTasks: [
+        {
+          task_id: "1d0dd84f-03ba-43e7-9f49-f2ba3034b7a7",
+          title:
+            "alias aut officia consequatur culpa sit repudiandae quia sed at",
+          description:
+            "Libero debitis rerum ut dicta in voluptatem natus aut dolores. Sint cum molestiae quaerat est ipsam aperiam odio. Dolorem sed nemo quibusdam cum quo culpa. Fuga ea nulla rerum ut. Alias et exercitationem voluptas.",
+          author_id: null,
+          status: "Active",
+          priority: 2,
+          date_due: null,
+          createdAt: "2022-06-28T16:55:50.107Z",
+          updatedAt: "2022-07-14T19:56:59.610Z",
+        },
+        {
+          task_id: "1d0dd84f-03ba-43e7-9f49-f2ba3034b7a7",
+          title:
+            "alias aut officia consequatur culpa sit repudiandae quia sed at",
+          description:
+            "Libero debitis rerum ut dicta in voluptatem natus aut dolores. Sint cum molestiae quaerat est ipsam aperiam odio. Dolorem sed nemo quibusdam cum quo culpa. Fuga ea nulla rerum ut. Alias et exercitationem voluptas.",
+          author_id: null,
+          status: "Active",
+          priority: 2,
+          date_due: null,
+          createdAt: "2022-06-28T16:55:50.107Z",
+          updatedAt: "2022-07-14T19:56:59.610Z",
+        },
+      ],
+      taskCount: 2,
+      config: {
+        page: "1",
+        order: "title",
+        sort: "asc",
+        priority: "all",
+        status: "all",
+        search: "",
+        perPage: "10",
+      },
+    };
+
+    render(<Tasks {...props} />);
+
+    const firstDeleteButton =
+      screen.getAllByTestId("delete-task")[0].children[0];
+
+    const resultCount = screen.getByTestId("result-count");
+    expect(resultCount).toBeInTheDocument();
+    expect(resultCount).toHaveTextContent(props.taskCount.toString());
+    expect(screen.queryAllByRole("row")).toHaveLength(
+      props.initialTasks.length + 1
+    );
+
+    await act(async () => {
+      fireEvent.click(firstDeleteButton);
+    });
+
+    expect(resultCount).toHaveTextContent((props.taskCount - 1).toString());
+    expect(screen.queryAllByRole("row")).toHaveLength(
+      props.initialTasks.length
     );
   });
 });

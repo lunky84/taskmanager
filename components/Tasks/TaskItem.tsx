@@ -19,6 +19,7 @@ const TaskItem: FC<any> = ({ t, onClickDelete }) => {
       </Table.Cell>
       <Table.Cell>
         <Button
+          data-testid="delete-task"
           animated="fade"
           color="red"
           onClick={() => {
