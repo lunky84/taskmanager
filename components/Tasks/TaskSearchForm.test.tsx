@@ -6,10 +6,8 @@ const config = {
   sort: "asc",
   priority: "2", // Medium
   status: "Active",
-  search: "",
+  search: "search term",
 };
-
-const searchTerm = "search term";
 
 describe("TaskSearchForm", () => {
   // Structure tests
@@ -36,9 +34,9 @@ describe("TaskSearchForm", () => {
 
   // Behaviour tests
   test("search input is set to provided searchTerm value", () => {
-    render(<TaskSearchForm config={config} searchTerm={searchTerm} />);
+    render(<TaskSearchForm config={config} />);
     const el = screen.getByTestId("search").children[0];
-    expect(el.getAttribute("value")).toEqual(searchTerm);
+    expect(el.getAttribute("value")).toEqual(config.search);
   });
 
   test("priority select is set to provided config value", () => {
@@ -51,6 +49,14 @@ describe("TaskSearchForm", () => {
     render(<TaskSearchForm config={config} />);
     const el = screen.getByTestId("status").children[0];
     expect(el.textContent).toEqual(config.status);
+  });
+
+  test("search input should change", async () => {
+    render(<TaskSearchForm config={config} updateSearchTerm={jest.fn()} />);
+    const el = screen.getByTestId("search").children[0];
+    const testValue = "test";
+    fireEvent.change(el, { target: { value: testValue } });
+    expect(el.getAttribute("value")).toEqual(testValue);
   });
 
   test("form reset button calls resetForm function", () => {

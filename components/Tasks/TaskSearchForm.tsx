@@ -7,10 +7,10 @@ const TaskSearchForm: FC<any> = ({
   searchTasks,
   filterTasks,
   resetForm,
-  updateSearchTerm,
-  searchTerm,
   config,
 }) => {
+  const [searchTerm, setSearchTerm] = useState(config.search);
+
   return (
     <>
       <Form
@@ -29,7 +29,9 @@ const TaskSearchForm: FC<any> = ({
             label="Search"
             placeholder="Enter a task ID or title"
             value={searchTerm}
-            onChange={(e) => updateSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
           />
           <Form.Select
             data-testid="priority"
@@ -75,7 +77,10 @@ const TaskSearchForm: FC<any> = ({
         basic
         icon
         labelPosition="left"
-        onClick={resetForm}
+        onClick={() => {
+          resetForm();
+          setSearchTerm("");
+        }}
       >
         <Icon name="refresh" />
         Reset

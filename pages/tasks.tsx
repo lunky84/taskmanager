@@ -101,10 +101,6 @@ export default function Tasks(props: any) {
     });
   };
 
-  const updateSearchTerm = (search: String) => {
-    setSearchTerm(search);
-  };
-
   const searchTasks = async (search: String) => {
     setConfig({
       ...config,
@@ -132,7 +128,7 @@ export default function Tasks(props: any) {
   };
 
   const resetForm = async () => {
-    setSearchTerm("");
+    console.log("resetForm called");
     setConfig({
       ...config,
       page: 1,
@@ -155,8 +151,6 @@ export default function Tasks(props: any) {
           searchTasks={searchTasks}
           filterTasks={filterTasks}
           resetForm={resetForm}
-          updateSearchTerm={updateSearchTerm}
-          searchTerm={searchTerm}
           config={config}
         ></TaskSearchForm>
       </Container>
