@@ -4,8 +4,12 @@ import TaskSearchForm from "./TaskSearchForm";
 const config = {
   order: "title",
   sort: "asc",
+  priority: "2", // Medium
+  status: "Active",
   search: "",
 };
+
+const searchTerm = "search term";
 
 describe("TaskSearchForm", () => {
   // Structure tests
@@ -31,16 +35,31 @@ describe("TaskSearchForm", () => {
   });
 
   // Behaviour tests
+  test("search input is set to provided searchTerm value", () => {
+    render(<TaskSearchForm config={config} searchTerm={searchTerm} />);
+    const el = screen.getByTestId("search").children[0];
+    expect(el.getAttribute("value")).toEqual(searchTerm);
+  });
 
-  it("form reset button calls resetForm function", () => {
+  test("priority select is set to provided config value", () => {
+    render(<TaskSearchForm config={config} />);
+    const el = screen.getByTestId("priority").children[0];
+    expect(el.textContent).toEqual("Medium");
+  });
+
+  test("status select is set to provided config value", () => {
+    render(<TaskSearchForm config={config} />);
+    const el = screen.getByTestId("status").children[0];
+    expect(el.textContent).toEqual(config.status);
+  });
+
+  test("form reset button calls resetForm function", () => {
     const resetForm = jest.fn();
-    const component = render(
+    const { getByTestId } = render(
       <TaskSearchForm resetForm={resetForm} config={config} />
     );
 
-    const button = component.getByTestId("form-reset");
-
-    fireEvent.click(button);
+    fireEvent.click(getByTestId("form-reset"));
 
     expect(resetForm).toHaveBeenCalledTimes(1);
   });
