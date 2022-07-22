@@ -20,6 +20,8 @@ const TaskSearchForm: FC<any> = ({
       >
         <Form.Group widths="equal">
           <Form.Input
+            data-testid="search"
+            id="search"
             action={{
               color: "blue",
               icon: "search",
@@ -30,6 +32,8 @@ const TaskSearchForm: FC<any> = ({
             onChange={(e) => updateSearchTerm(e.target.value)}
           />
           <Form.Select
+            data-testid="priority"
+            id="priority"
             label="Priority"
             value={config.priority}
             options={[
@@ -46,6 +50,8 @@ const TaskSearchForm: FC<any> = ({
             }}
           />
           <Form.Select
+            data-testid="status"
+            id="status"
             label="Status"
             value={config.status}
             options={[
