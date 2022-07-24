@@ -57,8 +57,7 @@ export default function Tasks(props: Props) {
 
   const router = useRouter();
   const [count, setCount] = useState(props.taskCount);
-  const [tasks, setTasks] = useState<Task[]>(props.initialTasks);
-  const [searchTerm, setSearchTerm] = useState(props.config.search);
+  const [tasks, setTasks] = useState(props.initialTasks);
   const [config, setConfig] = useState(props.config);
   const [pageCount, setPageCount] = useState(
     Math.ceil(props.taskCount / parseInt(props.config.perPage, 10))
