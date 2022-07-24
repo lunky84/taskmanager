@@ -1,8 +1,16 @@
 import { FC } from "react";
 import { Table } from "semantic-ui-react";
 import TaskItem from "@/components/Tasks/TaskItem";
+import { Task } from "../../utils/models";
 
-const TaskList: FC<any> = ({ onClickSort, onClickDelete, config, tasks }) => {
+interface Props {
+  onClickSort(): void;
+  onClickDelete(): void;
+  config: any;
+  tasks: Task[];
+}
+
+const TaskList: FC<Props> = ({ onClickSort, onClickDelete, config, tasks }) => {
   return (
     <Table sortable celled>
       <Table.Header>
