@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 
 import { GetServerSideProps } from "next";
-import { Prisma } from "@prisma/client";
 import { NextSeo } from "next-seo";
 import TaskList from "@/components/Tasks/TaskList";
 import TaskSearchForm from "@/components/Tasks/TaskSearchForm";
@@ -12,6 +11,7 @@ import { PaginationProps } from "semantic-ui-react/dist/commonjs/addons/Paginati
 import { DropdownProps } from "semantic-ui-react/dist/commonjs/modules/Dropdown/Dropdown";
 
 import { fetcher } from "../utils/fetcher";
+import { Config, Task } from "../utils/models";
 
 export const getServerSideProps: GetServerSideProps = async ({
   query: {
@@ -46,14 +46,18 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default function Tasks(props: any) {
+interface Props {
+  initialTasks: Task[];
+  taskCount: number;
+  config: Config;
+}
+
+export default function Tasks(props: Props) {
   const [firstLoad, setFirstLoad] = useState(true);
 
   const router = useRouter();
   const [count, setCount] = useState(props.taskCount);
-  const [tasks, setTasks] = useState<Prisma.TaskUncheckedCreateInput[]>(
-    props.initialTasks
-  );
+  const [tasks, setTasks] = useState<Task[]>(props.initialTasks);
   const [searchTerm, setSearchTerm] = useState(props.config.search);
   const [config, setConfig] = useState(props.config);
   const [pageCount, setPageCount] = useState(
@@ -66,7 +70,7 @@ export default function Tasks(props: any) {
       return;
     }
 
-    router.query.page = config.page;
+    router.query.page = config.page.toString();
     router.query.sort = config.sort;
     router.query.order = config.order;
     router.query.priority = config.priority;
@@ -82,7 +86,7 @@ export default function Tasks(props: any) {
       );
       setTasks(tasks);
       setCount(count);
-      setPageCount(Math.ceil(count / config.perPage));
+      setPageCount(Math.ceil(count / parseInt(config.perPage)));
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,7 +105,7 @@ export default function Tasks(props: any) {
     });
   };
 
-  const searchTasks = async (search: String) => {
+  const searchTasks = async (search: string) => {
     setConfig({
       ...config,
       order: "title",
@@ -113,7 +117,7 @@ export default function Tasks(props: any) {
     });
   };
 
-  const deleteTask = async (t: any) => {
+  const deleteTask = async (t: Task) => {
     await fetcher("/api/task/delete", { task_id: t.task_id });
     setTasks(tasks.filter((task) => task !== t));
     setCount(count - 1);
@@ -182,7 +186,7 @@ export default function Tasks(props: any) {
                   ) => {
                     setConfig({
                       ...config,
-                      perPage: data.value,
+                      perPage: data.value as string,
                       page: 1,
                     });
                   }}

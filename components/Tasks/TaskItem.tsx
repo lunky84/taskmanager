@@ -6,7 +6,7 @@ import { Task } from "../../utils/models";
 
 interface Props {
   t: Task;
-  onClickDelete(): void;
+  onClickDelete(t: Task): void;
 }
 
 const TaskItem: FC<Props> = ({ t, onClickDelete }) => {

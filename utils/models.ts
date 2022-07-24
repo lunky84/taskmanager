@@ -1,3 +1,13 @@
+export interface Config {
+  page: number;
+  order: string;
+  sort: string;
+  priority: string;
+  status: string;
+  search: string;
+  perPage: string;
+}
+
 export interface Task {
   task_id: string;
   title: string;

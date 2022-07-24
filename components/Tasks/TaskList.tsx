@@ -4,8 +4,8 @@ import TaskItem from "@/components/Tasks/TaskItem";
 import { Task } from "../../utils/models";
 
 interface Props {
-  onClickSort(): void;
-  onClickDelete(): void;
+  onClickSort(createdAt: string): void;
+  onClickDelete(t: Task): void;
   config: any;
   tasks: Task[];
 }
