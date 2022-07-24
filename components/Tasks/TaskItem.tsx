@@ -3,7 +3,24 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { Icon, Button, Table } from "semantic-ui-react";
 
-const TaskItem: FC<any> = ({ t, onClickDelete }) => {
+interface Task {
+  task_id: string;
+  title: string;
+  description: string;
+  author_id: number;
+  status: string;
+  priority: number;
+  date_due: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Props {
+  t: Task;
+  onClickDelete(): void;
+}
+
+const TaskItem: FC<Props> = ({ t, onClickDelete }) => {
   return (
     <Table.Row>
       <Table.Cell>
@@ -14,9 +31,7 @@ const TaskItem: FC<any> = ({ t, onClickDelete }) => {
       <Table.Cell>{t.description}</Table.Cell>
       <Table.Cell>{t.status}</Table.Cell>
       <Table.Cell>{t.priority}</Table.Cell>
-      <Table.Cell>
-        {format(new Date(t.createdAt as string), "yyyy-MM-dd")}
-      </Table.Cell>
+      <Table.Cell>{format(new Date(t.createdAt), "yyyy-MM-dd")}</Table.Cell>
       <Table.Cell>
         <Button
           data-testid="delete-task"
