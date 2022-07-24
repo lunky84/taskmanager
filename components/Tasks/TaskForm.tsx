@@ -5,21 +5,15 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { Prisma } from "@prisma/client";
 import { fetcher } from "../../utils/fetcher";
+import { Task } from "../../utils/models";
 import SemanticDatepicker from "react-semantic-ui-datepickers";
 import "react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css";
 
-interface props {
-  task: {
-    task_id: string | null;
-    title: string;
-    description: string;
-    status: string;
-    priority: number;
-    date_due: Date | null;
-  };
+interface Props {
+  task: Task;
 }
 
-const TaskForm: FC<props> = (props) => {
+const TaskForm: FC<Props> = (props) => {
   const [title, setTitle] = useState(props.task.title);
   const [description, setDescription] = useState(props.task.description);
   const [status, setStatus] = useState<string>(props.task.status);

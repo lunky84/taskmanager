@@ -2,18 +2,7 @@ import { FC } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Icon, Button, Table } from "semantic-ui-react";
-
-interface Task {
-  task_id: string;
-  title: string;
-  description: string;
-  author_id: number;
-  status: string;
-  priority: number;
-  date_due: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { Task } from "../../utils/models";
 
 interface Props {
   t: Task;
