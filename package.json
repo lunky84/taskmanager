@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "tc": "npm test -- --coverage --watchAll=false"
   },
   "dependencies": {
     "@faker-js/faker": "^7.3.0",

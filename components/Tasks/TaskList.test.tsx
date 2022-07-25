@@ -10,12 +10,15 @@ describe("TaskList", () => {
   it("sort by title calls function with correct argument", () => {
     const sorting = jest.fn();
     const app = render(
-      <TaskList onClickSort={sorting} config={config} tasks={[]} />
+      <TaskList
+        onClickSort={sorting}
+        onClickDelete={jest.fn()}
+        config={config}
+        tasks={[]}
+      />
     );
 
-    const th = app.getByTestId("sort-by-title");
-
-    fireEvent.click(th);
+    fireEvent.click(app.getByTestId("sort-by-title"));
 
     expect(sorting).toHaveBeenCalledTimes(1);
     expect(sorting).toBeCalledWith("title");
@@ -24,14 +27,78 @@ describe("TaskList", () => {
   it("sort by createdAt calls function with correct argument", () => {
     const sorting = jest.fn();
     const app = render(
-      <TaskList onClickSort={sorting} config={config} tasks={[]} />
+      <TaskList
+        onClickSort={sorting}
+        onClickDelete={jest.fn()}
+        config={config}
+        tasks={[]}
+      />
     );
 
-    const th = app.getByTestId("sort-by-createdAt");
-
-    fireEvent.click(th);
+    fireEvent.click(app.getByTestId("sort-by-createdAt"));
 
     expect(sorting).toHaveBeenCalledTimes(1);
     expect(sorting).toBeCalledWith("createdAt");
+  });
+
+  it("title th has class ascending when order title and sort desc", () => {
+    const app = render(
+      <TaskList
+        onClickSort={jest.fn()}
+        onClickDelete={jest.fn()}
+        config={config}
+        tasks={[]}
+      />
+    );
+
+    expect(app.getByTestId("sort-by-title")).toHaveClass("ascending");
+  });
+
+  it("title th has class descending when order title and sort desc", () => {
+    const app = render(
+      <TaskList
+        onClickSort={jest.fn()}
+        onClickDelete={jest.fn()}
+        config={{
+          order: "title",
+          sort: "desc",
+        }}
+        tasks={[]}
+      />
+    );
+
+    expect(app.getByTestId("sort-by-title")).toHaveClass("descending");
+  });
+
+  it("created th has class ascending when order createdAt and sort asc", () => {
+    const app = render(
+      <TaskList
+        onClickSort={jest.fn()}
+        onClickDelete={jest.fn()}
+        config={{
+          order: "createdAt",
+          sort: "asc",
+        }}
+        tasks={[]}
+      />
+    );
+
+    expect(app.getByTestId("sort-by-createdAt")).toHaveClass("ascending");
+  });
+
+  test("created th has class descending when order createdAt and sort desc", () => {
+    const app = render(
+      <TaskList
+        onClickSort={jest.fn()}
+        onClickDelete={jest.fn()}
+        config={{
+          order: "createdAt",
+          sort: "desc",
+        }}
+        tasks={[]}
+      />
+    );
+
+    expect(app.getByTestId("sort-by-createdAt")).toHaveClass("descending");
   });
 });
