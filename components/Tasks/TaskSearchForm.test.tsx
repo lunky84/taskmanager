@@ -59,6 +59,18 @@ describe("TaskSearchForm", () => {
     expect(el.getAttribute("value")).toEqual(testValue);
   });
 
+  test("form submit should call searchTasks function with searchTerm argument", () => {
+    const searchTasks = jest.fn();
+    const { getByTestId } = render(
+      <TaskSearchForm searchTasks={searchTasks} config={config} />
+    );
+
+    fireEvent.click(getByTestId("search").children[1]);
+
+    expect(searchTasks).toHaveBeenCalledTimes(1);
+    expect(searchTasks).toBeCalledWith(config.search);
+  });
+
   test("form reset button calls resetForm function", () => {
     const resetForm = jest.fn();
     const { getByTestId } = render(
