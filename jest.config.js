@@ -17,6 +17,11 @@ const customJestConfig = {
   testEnvironment: "jest-environment-jsdom",
   preset: "ts-jest",
   testEnvironment: "jsdom",
+  collectCoverageFrom: [
+    "components/**/*.tsx",
+    "pages/**/*.tsx",
+    "pages/**/*.ts",
+  ],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
