@@ -1,10 +1,17 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  within,
+  logRoles,
+  waitFor,
+} from "@testing-library/react";
 import TaskSearchForm from "./TaskSearchForm";
 
 const config = {
   order: "title",
   sort: "asc",
-  priority: "2", // Medium
+  priority: "3", // Medium
   status: "Active",
   search: "search term",
 };
@@ -42,7 +49,17 @@ describe("TaskSearchForm", () => {
   test("priority select is set to provided config value", () => {
     render(<TaskSearchForm config={config} />);
     const el = screen.getByTestId("priority").children[0];
-    expect(el.textContent).toEqual("Medium");
+    expect(el.textContent).toEqual("High");
+  });
+
+  test("priority select calls filterTasks function", async () => {
+    const filterTasks = jest.fn();
+    render(<TaskSearchForm filterTasks={filterTasks} config={config} />);
+    const dropdownOptions = within(screen.getByTestId("priority")).getAllByRole(
+      "option"
+    );
+    fireEvent.click(dropdownOptions[1]);
+    expect(filterTasks).toHaveBeenCalledTimes(1);
   });
 
   test("status select is set to provided config value", () => {
